@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Roboto_Condensed } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const roboto = Roboto_Condensed({
+import Navbar from "./_components/Navbar";
+
+const roboto = Roboto_Mono({
   subsets: ["latin"],
   variable: "--font-sans",
 });
@@ -23,10 +25,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           roboto.variable,
         )}
       >
+        <Navbar />
         {children}
       </body>
     </html>

@@ -1,28 +1,33 @@
+import Link from "next/link";
+
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Footer from "./_components/Footer";
 
 export default function Home() {
   return (
     <main>
+      <div className="bg-accent">
+        <MaxWidthWrapper>
+          <div className="mx-auto flex max-w-3xl flex-col items-center pb-20 pt-14 text-center lg:pt-20">
+            <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-6xl">
+              Your Marketplace for high-quality gizmos.
+            </h1>
+            <p className="mt-6 max-w-prose text-lg text-muted-foreground">
+              Welcome to Geeky Bazzar. Where the craziest contraptions meet the
+              nerdiest brains!
+            </p>
+            <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+              <Link href="/products" className={buttonVariants()}>
+                Browse Trending
+              </Link>
+              <Button variant="link">Our quality promise &rarr;</Button>
+            </div>
+          </div>
+        </MaxWidthWrapper>
+      </div>
       <MaxWidthWrapper>
-        <h1 className="flex justify-center px-4 text-6xl font-bold">GG</h1>
-        <p className="text-base text-muted-foreground">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus
-          officiis iure inventore deserunt dolor aliquam!
-        </p>
-        <p className="">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias
-          neque repellat, doloremque modi numquam fugit?
-        </p>
-        <div className="flex flex-col">
-          <Button>primary</Button>
-          <Button variant="outline">outline</Button>
-          <Button variant="ghost">ghost</Button>
-          <Button variant="secondary">secondary</Button>
-          <Button variant="destructive">destructive</Button>
-          <Button variant="link">link</Button>
-        </div>
+        <Footer />
       </MaxWidthWrapper>
     </main>
   );

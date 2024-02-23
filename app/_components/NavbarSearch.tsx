@@ -18,7 +18,7 @@ const NavbarSearch = () => {
 
   return (
     <>
-      <Button variant="ghost" onClick={() => setOpen(true)}>
+      <Button variant="ghost" className="h-11" onClick={() => setOpen(true)}>
         <Search />
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>

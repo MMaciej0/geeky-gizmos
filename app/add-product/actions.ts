@@ -62,5 +62,5 @@ export const createProduct = async (formData: FormData) => {
       error: "The product could not be created. Plase try again later",
     };
 
-  redirect("/created-product");
+  redirect(`/created-product/${slug}`);
 };

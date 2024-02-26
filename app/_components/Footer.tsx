@@ -45,7 +45,7 @@ const Footer = () => {
               </AccordionTrigger>
               <AccordionContent>
                 <div className="flex flex-1 items-center justify-center">
-                  <p className="inline-block max-w-[250px] p-4">
+                  <p className="inline-block p-4 lg:max-w-[250px]">
                     {perk.description}
                   </p>
                 </div>

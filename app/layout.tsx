@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 
 import Navbar from "./_components/Navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 const roboto = Roboto_Mono({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
         )}
       >
         <Navbar />
+        <Toaster />
         {children}
       </body>
     </html>

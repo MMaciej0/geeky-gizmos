@@ -6,14 +6,15 @@ interface ProductsPageProps {
   searchParams: {
     category?: string;
     q?: string;
+    name?: string;
+    description?: string;
   };
 }
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
-  const { category, q } = searchParams;
+  const { category, q, name, description } = searchParams;
 
   const searchQuery = q && paramToFullSearchString(q);
-  const searchCategory = category && paramToFullSearchString(category);
 
   const searchFilter: Prisma.ProductWhereInput = searchQuery
     ? {
@@ -28,7 +29,13 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   const where: Prisma.ProductWhereInput = {
     AND: [
       searchFilter,
-      category ? { category: { search: searchCategory } } : {},
+      category
+        ? { category: { search: paramToFullSearchString(category) } }
+        : {},
+      name ? { name: { contains: name, mode: "insensitive" } } : {},
+      description
+        ? { description: { contains: description, mode: "insensitive" } }
+        : {},
       { approved: true },
     ],
   };

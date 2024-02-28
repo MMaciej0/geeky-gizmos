@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import Multiselect from "@/components/ui/multiselect";
 import RichTextEditor from "@/components/RichTextEditor";
 import LoadingButton from "@/components/LoadingButton";
+import { Button } from "@/components/ui/button";
 
 const AddProductForm = () => {
   const { toast } = useToast();

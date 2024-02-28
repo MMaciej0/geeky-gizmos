@@ -9,6 +9,7 @@ import ProductSlider from "@/components/ProductSlider";
 
 export default async function Home() {
   const newestProducts = await prisma.product.findMany({
+    where: { approved: true },
     orderBy: { createdAt: "desc" },
     take: 10,
   });

@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 const Navbar = () => {
   const user = null;
   return (
-    <nav className="sticky top-0 z-50 w-full backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full backdrop-blur-xl">
       <MaxWidthWrapper>
         <div className="flex items-center rounded-b-lg p-2 ">
           <Link href="/" className="flex flex-1 items-center">

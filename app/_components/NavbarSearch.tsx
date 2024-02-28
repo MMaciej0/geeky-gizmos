@@ -1,38 +1,158 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
+import { Loader2, Search } from "lucide-react";
 import {
-  CommandDialog,
-  CommandEmpty,
+  Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
+import { SearchResult, searchProducts } from "../actions";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const NavbarSearch = () => {
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
+  const debouncedSearchValue = useDebounce(searchValue, 1000);
+
+  useEffect(() => {
+    if (debouncedSearchValue.length > 3) {
+      setIsLoading(true);
+      setSearchResult(null);
+      searchProducts(debouncedSearchValue)
+        .then((data) => setSearchResult(data))
+        .catch((error) => {
+          console.error("Error searching:", error);
+          setSearchResult(null);
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      setSearchResult(null);
+    }
+  }, [debouncedSearchValue]);
 
   return (
-    <>
-      <Button variant="ghost" className="h-11" onClick={() => setOpen(true)}>
-        <Search />
-      </Button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search for product name, category..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>Calendar</CommandItem>
-            <CommandItem>Search Emoji</CommandItem>
-            <CommandItem>Calculator</CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button className="h-11" variant="ghost" role="combobox">
+          <Search />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0">
+        <Command
+          shouldFilter={false}
+          className="h-auto w-[350px] rounded-lg border border-b-0 shadow-md"
+        >
+          <CommandInput
+            value={searchValue}
+            onValueChange={setSearchValue}
+            placeholder="Search..."
+          />
+          <CommandList>
+            {isLoading && (
+              <div className="flex items-center justify-center p-4">
+                <Loader2 size={25} className="animate-spin" />
+              </div>
+            )}
+            {!isLoading && !searchResult && debouncedSearchValue.length > 3 && (
+              <p className="mt-3 p-2 text-center text-sm">No results.</p>
+            )}
+            {debouncedSearchValue.length < 4 && (
+              <p className="mt-3 p-2 text-center text-sm">
+                The search value must be longer than 3 characters.
+              </p>
+            )}
+
+            {searchResult && (
+              <>
+                {searchResult.productsByName &&
+                  searchResult.productsByName.length > 0 && (
+                    <>
+                      <CommandGroup heading="Product names matching your search:">
+                        {searchResult.productsByName?.map(
+                          ({ name, id, slug }) => {
+                            return (
+                              <CommandItem key={id}>
+                                <Link href={`/product/${slug}`}>{name}</Link>
+                              </CommandItem>
+                            );
+                          },
+                        )}
+                        {searchResult.productsByNameCounter! >
+                          searchResult.productsByName.length && (
+                          <Link href={`/products?name=${searchValue}`}>
+                            <p className="px-2 py-1.5 text-xs font-semibold underline">
+                              See all products whose name matches your search -{" "}
+                              {searchResult.productsByNameCounter}
+                            </p>
+                          </Link>
+                        )}
+                      </CommandGroup>
+                      <hr />
+                    </>
+                  )}
+                {searchResult.productsByDescription &&
+                  searchResult.productsByDescription.length > 0 && (
+                    <>
+                      <CommandGroup heading="Product descriptions matching your search:">
+                        {searchResult.productsByDescription?.map(
+                          ({ name, id, description, slug }) => {
+                            return (
+                              <div className="my-1" key={id}>
+                                <CommandItem>
+                                  <Link href={`/product/${slug}`}>{name}</Link>
+                                </CommandItem>
+                                <p className="px-2 py-1.5 text-xs">
+                                  {description}
+                                </p>
+                                <hr className="opacity-40" />
+                              </div>
+                            );
+                          },
+                        )}
+                      </CommandGroup>
+                      {searchResult.productsByDescriptionCounter! >
+                        searchResult.productsByDescription.length && (
+                        <Link href={`/products?description=${searchValue}`}>
+                          <p className="px-2 py-1.5 text-xs font-semibold underline">
+                            See all products whose description matches your
+                            search - {searchResult.productsByDescriptionCounter}
+                          </p>
+                        </Link>
+                      )}
+                    </>
+                  )}
+                {searchResult.category && (
+                  <>
+                    <CommandGroup heading="Category:">
+                      <CommandItem>
+                        <Link
+                          href={`/products?category=${searchResult.category}`}
+                        >
+                          {searchResult.category}
+                        </Link>
+                      </CommandItem>
+                    </CommandGroup>
+                  </>
+                )}
+              </>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };
 

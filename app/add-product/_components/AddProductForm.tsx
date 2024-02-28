@@ -23,7 +23,6 @@ import { Input } from "@/components/ui/input";
 import Multiselect from "@/components/ui/multiselect";
 import RichTextEditor from "@/components/RichTextEditor";
 import LoadingButton from "@/components/LoadingButton";
-import { Button } from "@/components/ui/button";
 
 const AddProductForm = () => {
   const { toast } = useToast();
@@ -35,6 +34,7 @@ const AddProductForm = () => {
       category: "",
       stock: "",
       description: "",
+      brand: "",
     },
     resolver: zodResolver(addProductFormSchema),
   });
@@ -80,6 +80,19 @@ const AddProductForm = () => {
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input {...field} placeholder="Product name..." />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="brand"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Brand</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Product brand..." />
               </FormControl>
               <FormMessage />
             </FormItem>

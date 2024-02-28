@@ -1,12 +1,22 @@
 "use server";
 
-import { put } from "@vercel/blob";
+import { redirect } from "next/navigation";
 import { nanoid } from "nanoid";
+import { v2 as cloudinary } from "cloudinary";
 import path from "path";
 import prisma from "@/lib/prisma";
 import { toSlug } from "@/lib/utils";
 import { addProductFormSchema } from "@/lib/validators/addProductForm";
-import { redirect } from "next/navigation";
+
+interface CloudinaryUploadResult {
+  secure_url: string;
+}
+
+cloudinary.config({
+  cloud_name: "geeky-bazzar",
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 export const createProduct = async (formData: FormData) => {
   const productData = Object.fromEntries(formData.entries());
@@ -27,16 +37,22 @@ export const createProduct = async (formData: FormData) => {
   const slug = `${toSlug(name)}-${nanoid(10)}`;
 
   if (image) {
-    const blob = await put(
-      `products_images/${slug}${path.extname(image.name)}`,
-      image,
-      {
-        access: "public",
-        addRandomSuffix: false,
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+    const result = await new Promise<CloudinaryUploadResult>(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({}, (error, result) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+            resolve(result as CloudinaryUploadResult);
+          })
+          .end(buffer);
       },
     );
-
-    productImageUrl = blob.url;
+    productImageUrl = result.secure_url;
   }
 
   if (!productImageUrl)

@@ -33,6 +33,7 @@ const imageSchema = z
 export const addProductFormSchema = z.object({
   name: requiredString,
   image: imageSchema,
+  brand: requiredString,
   price: requiredString.regex(/^\d*\.?\d+$/, "It is not a valid price."),
   category: categorySchema,
   stock: requiredString.regex(/^[1-9]\d*$/, "It is not a valid value."),

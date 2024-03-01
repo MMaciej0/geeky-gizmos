@@ -46,7 +46,7 @@ const NavbarSearch = () => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button className="h-11" variant="ghost" role="combobox">
+        <Button className="h-11 px-3" variant="ghost" role="combobox">
           <Search />
         </Button>
       </PopoverTrigger>

@@ -2,12 +2,13 @@ import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-import { ShoppingBasket, User } from "lucide-react";
+import { KeyRound, ShoppingBasket, User, UserPlus } from "lucide-react";
 import NavbarSearch from "./NavbarSearch";
 import { Icons } from "@/components/Icons";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import UserPanel from "./UserPanel";
 
 const Navbar = () => {
   const user = null;
@@ -26,10 +27,10 @@ const Navbar = () => {
               </span>
             </p>
           </Link>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-1 md:space-x-4">
             <NavbarSearch />
             <Link
-              href="/cart"
+              href="/basket"
               className={cn(
                 buttonVariants({
                   variant: "ghost",
@@ -44,22 +45,7 @@ const Navbar = () => {
               </Badge>
               <span className="font-semibold leading-none">$0.00</span>
             </Link>
-            {user ? (
-              <Link href="/profile">Avatar</Link>
-            ) : (
-              <Link
-                href="/sign-in"
-                className={cn(
-                  buttonVariants({
-                    variant: "ghost",
-                    className: "flex h-11 flex-col",
-                  }),
-                )}
-              >
-                <User className="flex-shrink-0" />
-                <span className="font-semibold">Sign in</span>
-              </Link>
-            )}
+            <UserPanel />
           </div>
         </div>
       </MaxWidthWrapper>

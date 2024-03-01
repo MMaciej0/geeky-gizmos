@@ -25,7 +25,7 @@ model User {
   updatedAt      DateTime  @updatedAt
   role           Role      @default(USER)
   accounts       Account[]
-  products       Product[]
+  // products       Product[]
 }
 
 model Account {
@@ -51,7 +51,7 @@ model Product {
   id          Int      @id @default(autoincrement())
   slug        String   @unique
   name        String
-  brand       String
+  // brand       String
   description String
   imageUrl    String
   price       Float
@@ -60,8 +60,10 @@ model Product {
   approved    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  seller      User?    @relation(fields: [sellerId], references: [id])
-  sellerId    Int?
+  // seller      User?    @relation(fields: [sellerId], references: [id])
+  // sellerId    Int?
+  // User        User?    @relation(fields: [userId], references: [id])
+  // userId      Int?
 
   @@map("products")
 }

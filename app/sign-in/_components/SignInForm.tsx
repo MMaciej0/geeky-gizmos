@@ -113,7 +113,7 @@ const SignInForm = () => {
               isLoading={isSubmitting}
               className="mt-4"
             >
-              Sign up
+              Sign in
             </LoadingButton>
           </form>
           <hr />

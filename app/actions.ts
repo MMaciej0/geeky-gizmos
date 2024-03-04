@@ -3,6 +3,7 @@
 import { Prisma, Product } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { truncateString } from "@/lib/utils";
+import { signOut } from "@/auth";
 
 export interface SearchResult {
   productsByName?: Product[];
@@ -63,4 +64,8 @@ export const searchProducts = async (
     productsByDescriptionCounter,
     category: category && `${category[0].toUpperCase()}${category.slice(1)}`,
   };
+};
+
+export const logout = async () => {
+  await signOut();
 };

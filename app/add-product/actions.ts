@@ -6,7 +6,7 @@ import { v2 as cloudinary } from "cloudinary";
 import path from "path";
 import prisma from "@/lib/prisma";
 import { toSlug } from "@/lib/utils";
-import { addProductFormSchema } from "@/lib/validators/addProductForm";
+import { addProductFormSchema } from "@/lib/validators/addProductValidation";
 
 interface CloudinaryUploadResult {
   secure_url: string;

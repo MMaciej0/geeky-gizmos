@@ -1,5 +1,7 @@
-import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from "clsx";
+import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,4 +45,24 @@ export const truncateString = (
   }
 
   return truncatedStringArr.join(" ");
+};
+
+export const getUser = async () => {
+  const session = await auth();
+  if (!session?.user) {
+    return null;
+  }
+
+  return session.user;
+};
+
+export const findUserByEmail = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) return null;
+  return user;
 };

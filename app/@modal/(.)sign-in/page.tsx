@@ -20,8 +20,10 @@ const SignInModal = () => {
         }
       }}
     >
-      <DialogContent className="p-0">
-        <SignInForm />
+      <DialogContent className="h-full overflow-y-auto p-0 md:h-auto">
+        <div className="my-auto p-1 md:p-0">
+          <SignInForm />
+        </div>
       </DialogContent>
     </Dialog>
   );

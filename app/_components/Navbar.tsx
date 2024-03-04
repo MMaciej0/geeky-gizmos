@@ -1,17 +1,18 @@
 import React from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
-import { KeyRound, ShoppingBasket, User, UserPlus } from "lucide-react";
+import { cn, getUser } from "@/lib/utils";
+
+import { ShoppingBasket } from "lucide-react";
 import NavbarSearch from "./NavbarSearch";
+import UserPanel from "./UserPanel";
 import { Icons } from "@/components/Icons";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import UserPanel from "./UserPanel";
 
-const Navbar = () => {
-  const user = null;
+const Navbar = async () => {
+  const user = await getUser();
   return (
     <nav className="sticky top-0 z-50 w-full backdrop-blur-xl">
       <MaxWidthWrapper>
@@ -45,7 +46,7 @@ const Navbar = () => {
               </Badge>
               <span className="font-semibold leading-none">$0.00</span>
             </Link>
-            <UserPanel />
+            <UserPanel user={user} />
           </div>
         </div>
       </MaxWidthWrapper>

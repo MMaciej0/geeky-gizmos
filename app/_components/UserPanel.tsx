@@ -5,14 +5,19 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { KeyRound, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { User } from "next-auth";
+import { FC } from "react";
 
-const UserPanel = () => {
+interface UserPanelProps {
+  user: User | null;
+}
+
+const UserPanel: FC<UserPanelProps> = ({ user }) => {
   const path = usePathname();
   const router = useRouter();
-  const user = null;
 
   return user ? (
-    <Link href="/profile">Avatar</Link>
+    <Link href="/profile">{user.name}</Link>
   ) : (
     <>
       <Button

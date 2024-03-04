@@ -6,7 +6,7 @@ import { draftToMarkdown } from "markdown-draft-js";
 import {
   TAddProductSchema,
   addProductFormSchema,
-} from "@/lib/validators/addProductForm";
+} from "@/lib/validators/addProductValidation";
 import { createProduct } from "../actions";
 import { categories } from "@/app/_components/CategoriesGrid";
 

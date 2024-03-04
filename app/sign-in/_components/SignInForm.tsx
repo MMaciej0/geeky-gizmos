@@ -1,3 +1,11 @@
+"use client";
+
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { TLoginSchema, loginSchema } from "@/lib/validators/userValidation";
+import { login, signInWithWithGoogle } from "../actions";
+
 import {
   Card,
   CardContent,
@@ -5,11 +13,56 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import LoadingButton from "@/components/LoadingButton";
+import { useToast } from "@/components/ui/use-toast";
 
 const SignInForm = () => {
+  const { toast } = useToast();
+  const form = useForm<TLoginSchema>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(loginSchema),
+  });
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form;
+
+  const onSubmit: SubmitHandler<TLoginSchema> = async (data) => {
+    await login(data).then((callback) => {
+      if (callback?.error) {
+        toast({
+          variant: "destructive",
+          description: callback.error,
+        });
+      }
+    });
+  };
+
+  const signInWithGoogleHandler = async () => {
+    try {
+      await signInWithWithGoogle();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Something went wrong. Try again later.",
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -19,28 +72,59 @@ const SignInForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                placeholder="john.doe@example.com"
-              />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" placeholder="Password..." />
-            </div>
-            <Button className="mt-2">Sign in</Button>
-          </div>
-        </form>
-        <form action="" className="pt-4">
-          <Button className="w-full" variant="outline">
-            Sign in with Google
+        <Form {...form}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mb-4 grid grid-cols-1 gap-4"
+          >
+            <FormField
+              control={control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="email" placeholder="Email..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Password..."
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <LoadingButton
+              type="submit"
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+              className="mt-4"
+            >
+              Sign up
+            </LoadingButton>
+          </form>
+          <hr />
+          <Button
+            onClick={signInWithGoogleHandler}
+            className="mt-4 w-full"
+            variant="outline"
+          >
+            Sign up with Google
           </Button>
-        </form>
+        </Form>
       </CardContent>
     </Card>
   );

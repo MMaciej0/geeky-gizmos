@@ -49,24 +49,15 @@ const UserPanel: FC<UserPanelProps> = ({ user }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Button asChild size="sm" variant="ghost" className="w-full">
-              <Link href="/profile">
-                <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </Link>
-            </Button>
+          <DropdownMenuItem asChild>
+            <Link href="/profile">
+              <UserIcon className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Button
-              variant="ghost"
-              className="w-full"
-              size="sm"
-              onClick={onSignout}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
-            </Button>
+          <DropdownMenuItem onClick={onSignout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Sign out</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

@@ -4,7 +4,10 @@ import { signIn } from "@/auth";
 import { TLoginSchema, loginSchema } from "@/lib/validators/userValidation";
 import { AuthError } from "next-auth";
 
-export const login = async (credentials: TLoginSchema) => {
+export const login = async (
+  credentials: TLoginSchema,
+  callbackUrl?: string,
+) => {
   const validatedCredentials = loginSchema.safeParse(credentials);
 
   if (!validatedCredentials.success) {
@@ -17,7 +20,7 @@ export const login = async (credentials: TLoginSchema) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/",
+      redirectTo: callbackUrl || "/",
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -29,8 +32,8 @@ export const login = async (credentials: TLoginSchema) => {
   }
 };
 
-export const signInWithWithGoogle = async () => {
+export const signInWithWithGoogle = async (callbackUrl?: string) => {
   await signIn("google", {
-    redirectTo: "/",
+    redirectTo: callbackUrl || "/",
   });
 };

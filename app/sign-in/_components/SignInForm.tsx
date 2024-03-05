@@ -2,6 +2,7 @@
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
 
 import { TLoginSchema, loginSchema } from "@/lib/validators/userValidation";
 import { login, signInWithWithGoogle } from "../actions";
@@ -27,6 +28,8 @@ import LoadingButton from "@/components/LoadingButton";
 import { useToast } from "@/components/ui/use-toast";
 
 const SignInForm = () => {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const { toast } = useToast();
   const form = useForm<TLoginSchema>({
     defaultValues: {
@@ -42,7 +45,7 @@ const SignInForm = () => {
   } = form;
 
   const onSubmit: SubmitHandler<TLoginSchema> = async (data) => {
-    await login(data).then((callback) => {
+    await login(data, callbackUrl).then((callback) => {
       if (callback?.error) {
         toast({
           variant: "destructive",
@@ -54,7 +57,7 @@ const SignInForm = () => {
 
   const signInWithGoogleHandler = async () => {
     try {
-      await signInWithWithGoogle();
+      await signInWithWithGoogle(callbackUrl);
     } catch (error) {
       toast({
         variant: "destructive",

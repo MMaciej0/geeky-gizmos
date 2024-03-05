@@ -6,7 +6,7 @@ import { AuthError } from "next-auth";
 
 export const login = async (
   credentials: TLoginSchema,
-  callbackUrl?: string,
+  callbackUrl: string | null,
 ) => {
   const validatedCredentials = loginSchema.safeParse(credentials);
 
@@ -20,7 +20,7 @@ export const login = async (
     await signIn("credentials", {
       email,
       password,
-      redirectTo: callbackUrl || "/",
+      redirectTo: callbackUrl ?? "/",
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -32,8 +32,8 @@ export const login = async (
   }
 };
 
-export const signInWithWithGoogle = async (callbackUrl?: string) => {
+export const signInWithWithGoogle = async (callbackUrl: string | null) => {
   await signIn("google", {
-    redirectTo: callbackUrl || "/",
+    redirectTo: callbackUrl ?? "/",
   });
 };

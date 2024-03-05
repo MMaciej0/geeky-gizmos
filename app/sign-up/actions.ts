@@ -11,17 +11,17 @@ import { signIn } from "@/auth";
 import { findUserByEmail } from "@/lib/utils";
 
 export const register = async (formData: TRegisterSchema) => {
+  const validatedCredentials = registerSchema.safeParse(formData);
+
+  if (!validatedCredentials.success) {
+    return {
+      error: "Invalid credentials.",
+    };
+  }
+
+  const { name, password, email } = validatedCredentials.data;
+
   try {
-    const validatedCredentials = registerSchema.safeParse(formData);
-
-    if (!validatedCredentials.success) {
-      return {
-        error: "Invalid credentials.",
-      };
-    }
-
-    const { name, password, email } = validatedCredentials.data;
-
     const emailExist = await findUserByEmail(email);
 
     if (emailExist) {
@@ -45,10 +45,17 @@ export const register = async (formData: TRegisterSchema) => {
         error: "Something went wrong, please try again later.",
       };
   } catch (error) {
+    console.log(error);
     return {
       error: "Something went wrong, please try again later.",
     };
   }
+
+  await signIn("credentials", {
+    email,
+    password,
+    redirectTo: "/",
+  });
 };
 
 export const signUpWithGoogle = async () => {

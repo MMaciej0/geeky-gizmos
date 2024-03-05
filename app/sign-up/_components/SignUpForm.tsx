@@ -46,14 +46,13 @@ const SignUpForm = () => {
   } = form;
 
   const onSubmit: SubmitHandler<TRegisterSchema> = async (data) => {
-    await register(data).then((callback) => {
-      if (callback?.error) {
-        toast({
-          variant: "destructive",
-          description: callback.error,
-        });
-      }
-    });
+    const result = await register(data);
+    if (result?.error) {
+      return toast({
+        variant: "destructive",
+        description: result.error,
+      });
+    }
   };
 
   const signUpWithGoogleHandler = async () => {

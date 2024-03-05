@@ -1,13 +1,15 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "./lib/prisma";
-
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import type { NextAuthConfig } from "next-auth";
-import { loginSchema } from "./lib/validators/userValidation";
-import { findUserByEmail } from "./lib/utils";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
+
+import prisma from "./lib/prisma";
+import { loginSchema } from "./lib/validators/userValidation";
+import { findUserByEmail, findUserById } from "./lib/utils";
+
+import type { NextAuthConfig } from "next-auth";
+import type { Role } from "@prisma/client";
 
 export const authConfig = {
   providers: [
@@ -57,7 +59,34 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  callbacks: {
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
+
+      if (session.user && token.role) {
+        session.user.role = token.role as Role;
+      }
+
+      return session;
+    },
+    async jwt({ token }) {
+      if (!token.sub) return token;
+
+      const currentUser = await findUserById(token.sub);
+
+      if (!currentUser) return token;
+
+      token.role = currentUser.role;
+
+      return token;
+    },
+  },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  pages: {
+    signIn: "/sign-in",
+  },
   ...authConfig,
 });

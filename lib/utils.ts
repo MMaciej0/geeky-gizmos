@@ -66,3 +66,14 @@ export const findUserByEmail = async (email: string) => {
   if (!user) return null;
   return user;
 };
+
+export const findUserById = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!user) return null;
+  return user;
+};

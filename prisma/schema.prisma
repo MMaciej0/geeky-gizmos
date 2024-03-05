@@ -9,11 +9,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model Product {
   id          Int      @id @default(autoincrement())
   slug        String   @unique
@@ -29,6 +24,11 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   @@map("products")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model User {

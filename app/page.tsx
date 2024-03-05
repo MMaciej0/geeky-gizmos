@@ -32,10 +32,12 @@ export default async function Home() {
             <Button variant="link">Our quality promise &rarr;</Button>
           </div>
         </header>
-        <section>
-          <h3 className="my-4 text-2xl font-bold">Newest</h3>
-          <ProductSlider products={newestProducts} />
-        </section>
+        {newestProducts.length > 0 && (
+          <section>
+            <h3 className="my-4 text-2xl font-bold">Newest</h3>
+            <ProductSlider products={newestProducts} />
+          </section>
+        )}
         <section>
           <h3 className="my-4 text-2xl font-bold">Categories</h3>
           <CategoriesGrid />

@@ -3,22 +3,29 @@
 import { redirect } from "next/navigation";
 import { nanoid } from "nanoid";
 import { v2 as cloudinary } from "cloudinary";
-import path from "path";
 import prisma from "@/lib/prisma";
-import { toSlug } from "@/lib/utils";
+import { getUser, toSlug } from "@/lib/utils";
 import { addProductFormSchema } from "@/lib/validators/addProductValidation";
+import { Role } from "@prisma/client";
 
 interface CloudinaryUploadResult {
   secure_url: string;
 }
 
 cloudinary.config({
-  cloud_name: "geeky-bazzar",
+  cloud_name: "dcmmff2dl",
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
 export const createProduct = async (formData: FormData) => {
+  const user = await getUser();
+
+  if (!user || user.role !== Role.ADMIN)
+    return {
+      error: "You do not have permission to perform this action.",
+    };
+
   const productData = Object.fromEntries(formData.entries());
 
   const validatedProductData = addProductFormSchema.safeParse(productData);
@@ -29,7 +36,7 @@ export const createProduct = async (formData: FormData) => {
     };
   }
 
-  const { name, image, price, category, stock, description } =
+  const { name, image, price, category, stock, description, brand } =
     validatedProductData.data;
 
   let productImageUrl: string | undefined = undefined;
@@ -65,6 +72,7 @@ export const createProduct = async (formData: FormData) => {
     data: {
       name: name.trim(),
       slug,
+      brand,
       imageUrl: productImageUrl,
       category,
       price: Number(price),

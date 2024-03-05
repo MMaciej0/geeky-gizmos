@@ -6,7 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { User } from "next-auth";
 import { logout } from "../actions";
 
-import { KeyRound, LogOut, User as UserIcon, UserPlus } from "lucide-react";
+import {
+  KeyRound,
+  LogOut,
+  Settings,
+  User as UserIcon,
+  UserPlus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,9 +24,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ExtendedUser } from "@/types/next-auth";
+import { Role } from "@prisma/client";
 
 interface UserPanelProps {
-  user: User | null;
+  user: ExtendedUser | null;
 }
 
 const UserPanel: FC<UserPanelProps> = ({ user }) => {
@@ -49,12 +57,25 @@ const UserPanel: FC<UserPanelProps> = ({ user }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href="/profile">
-              <UserIcon className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </Link>
-          </DropdownMenuItem>
+          {user.role === Role.ADMIN ? (
+            <>
+              <DropdownMenuItem asChild>
+                <Link href="/admin">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuItem asChild>
+                <Link href="/profile">
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuItem onClick={onSignout}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign out</span>

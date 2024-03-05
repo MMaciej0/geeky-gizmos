@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 import { cn, getUser } from "@/lib/utils";
+import { Role } from "@prisma/client";
 
 import { ShoppingBasket } from "lucide-react";
 import NavbarSearch from "./NavbarSearch";
@@ -30,22 +31,24 @@ const Navbar = async () => {
           </Link>
           <div className="flex items-center space-x-1 md:space-x-4">
             <NavbarSearch />
-            <Link
-              href="/basket"
-              className={cn(
-                buttonVariants({
-                  variant: "ghost",
-                  className:
-                    "relative flex h-11 flex-col items-center justify-center",
-                }),
-              )}
-            >
-              <ShoppingBasket className="flex-shrink-0" />
-              <Badge className="absolute right-[5px] top-0 px-[5px] py-0">
-                0
-              </Badge>
-              <span className="font-semibold leading-none">$0.00</span>
-            </Link>
+            {user?.role === Role.USER && (
+              <Link
+                href="/basket"
+                className={cn(
+                  buttonVariants({
+                    variant: "ghost",
+                    className:
+                      "relative flex h-11 flex-col items-center justify-center",
+                  }),
+                )}
+              >
+                <ShoppingBasket className="flex-shrink-0" />
+                <Badge className="absolute right-[5px] top-0 px-[5px] py-0">
+                  0
+                </Badge>
+                <span className="font-semibold leading-none">$0.00</span>
+              </Link>
+            )}
             <UserPanel user={user} />
           </div>
         </div>

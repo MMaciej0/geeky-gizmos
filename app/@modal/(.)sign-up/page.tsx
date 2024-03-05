@@ -1,6 +1,6 @@
 "use client";
 
-import SignUpForm from "@/app/sign-up/_components/SignUpForm";
+import SignUpForm from "@/app/(auth)/sign-up/_components/SignUpForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import React from "react";

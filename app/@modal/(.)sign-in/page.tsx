@@ -1,6 +1,6 @@
 "use client";
 
-import SignInForm from "@/app/sign-in/_components/SignInForm";
+import SignInForm from "@/app/(auth)/sign-in/_components/SignInForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import React from "react";

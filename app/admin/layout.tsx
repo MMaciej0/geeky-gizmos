@@ -1,6 +1,8 @@
 import RoleGate from "@/components/RoleGate";
 import { Role } from "@prisma/client";
 
+import AdminNavbar from "./_components/AdminNavbar";
+
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -8,7 +10,10 @@ export default function AdminLayout({
 }>) {
   return (
     <div>
-      <RoleGate allowedRole={Role.ADMIN}>{children}</RoleGate>
+      <RoleGate allowedRole={Role.ADMIN}>
+        <AdminNavbar />
+        {children}
+      </RoleGate>
     </div>
   );
 }

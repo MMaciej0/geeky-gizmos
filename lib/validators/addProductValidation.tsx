@@ -31,7 +31,7 @@ const imageSchema = z
   }, "File must be less than 2MB");
 
 export const addProductFormSchema = z.object({
-  name: requiredString,
+  name: requiredString.max(30, "This name is too long."),
   image: imageSchema,
   brand: requiredString,
   price: requiredString.regex(/^\d*\.?\d+$/, "It is not a valid price."),

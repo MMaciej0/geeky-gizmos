@@ -77,3 +77,18 @@ export const findUserById = async (id: string) => {
   if (!user) return null;
   return user;
 };
+
+export const formatPrice = (price: number) => {
+  if (Number.isInteger(price)) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(price);
+  } else {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(price);
+  }
+};

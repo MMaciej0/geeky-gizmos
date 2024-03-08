@@ -78,6 +78,12 @@ export const findUserById = async (id: string) => {
   return user;
 };
 
+export const findProductBySlug = async (slug: string) => {
+  const product = await prisma.product.findUnique({ where: { slug } });
+  if (!product) return null;
+  return product;
+};
+
 export const formatPrice = (price: number) => {
   if (Number.isInteger(price)) {
     return new Intl.NumberFormat("en-US", {

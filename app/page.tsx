@@ -34,12 +34,12 @@ export default async function Home() {
         </header>
         {newestProducts.length > 0 && (
           <section>
-            <h3 className="my-4 text-2xl font-bold">Newest</h3>
+            <h3 className="my-4 px-4 text-2xl font-bold">Newest</h3>
             <ProductSlider products={newestProducts} />
           </section>
         )}
         <section>
-          <h3 className="my-4 text-2xl font-bold">Categories</h3>
+          <h3 className="my-4 px-4 text-2xl font-bold">Categories</h3>
           <CategoriesGrid />
         </section>
       </MaxWidthWrapper>

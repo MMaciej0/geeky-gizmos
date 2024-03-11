@@ -3,7 +3,6 @@
 import { Product } from "@prisma/client";
 import React, { FC } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 import {
   Carousel,
@@ -12,7 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "./ui/carousel";
-import { Badge } from "./ui/badge";
+import ProductCard from "./ProductCard";
 
 interface ProductSliderProps {
   products: Product[];
@@ -36,23 +35,7 @@ const ProductSlider: FC<ProductSliderProps> = ({ products }) => {
               href={`product/${product.slug}`}
               className="flex flex-col overflow-hidden rounded-lg shadow-lg"
             >
-              <div className="relative min-h-[200px]">
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  fill
-                  className="object-cover object-center"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <div className="space-y-2 p-4">
-                <hr />
-                <Badge className="ml-auto tracking-wide">
-                  <span className="pr-1">$</span>
-                  {product.price}
-                </Badge>
-                <h4 className="font-semibold">{product.name}</h4>
-              </div>
+              <ProductCard product={product} />
             </Link>
           </CarouselItem>
         ))}

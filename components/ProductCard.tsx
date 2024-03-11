@@ -24,14 +24,13 @@ const ProductCard: FC<ProductCardProps> = ({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
-      <div className="">
-        <div className="flex flex-col space-y-4 p-4">
-          <div className="flex items-center justify-between space-x-4">
-            <h3 className="truncate-2 h-[3em] text-lg font-semibold">{name}</h3>
-            <Badge>{formatPrice(price)}</Badge>
-          </div>
-          <p className="text-sm">{brand}</p>
+
+      <div className="flex flex-col space-y-4 p-4">
+        <div className="flex items-center justify-between space-x-4">
+          <h3 className="truncate-2 h-[3em] text-lg font-semibold">{name}</h3>
+          <Badge>{formatPrice(price)}</Badge>
         </div>
+        <p className="text-sm">{brand}</p>
       </div>
     </div>
   );

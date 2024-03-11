@@ -2,23 +2,26 @@
 
 import { redirect } from "next/navigation";
 import { nanoid } from "nanoid";
-import { v2 as cloudinary } from "cloudinary";
-import prisma from "@/lib/prisma";
-import { getUser, toSlug } from "@/lib/utils";
-import { addProductFormSchema } from "@/lib/validators/addProductValidation";
+
 import { Role } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import {
+  findProductById,
+  getClodinaryPublicIdFromUrl,
+  getUser,
+  toSlug,
+} from "@/lib/utils";
+import { addProductFormSchema } from "@/lib/validators/addProductValidation";
+import cloudinary from "@/lib/cloudinary";
 
 interface CloudinaryUploadResult {
   secure_url: string;
 }
 
-cloudinary.config({
-  cloud_name: "dcmmff2dl",
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET,
-});
-
-export const createProduct = async (formData: FormData) => {
+export const createProduct = async (
+  formData: FormData,
+  productToEditId?: number,
+) => {
   const user = await getUser();
 
   if (!user || user.role !== Role.ADMIN)
@@ -42,34 +45,33 @@ export const createProduct = async (formData: FormData) => {
   let productImageUrl: string | undefined = undefined;
 
   const slug = `${toSlug(name)}-${nanoid(10)}`;
+  try {
+    if (image) {
+      const arrayBuffer = await image.arrayBuffer();
+      const buffer = new Uint8Array(arrayBuffer);
+      const result = await new Promise<CloudinaryUploadResult>(
+        (resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream({}, (error, result) => {
+              if (error) {
+                reject(error);
+                return;
+              }
+              resolve(result as CloudinaryUploadResult);
+            })
+            .end(buffer);
+        },
+      );
+      productImageUrl = result.secure_url;
+    }
 
-  if (image) {
-    const arrayBuffer = await image.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const result = await new Promise<CloudinaryUploadResult>(
-      (resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream({}, (error, result) => {
-            if (error) {
-              reject(error);
-              return;
-            }
-            resolve(result as CloudinaryUploadResult);
-          })
-          .end(buffer);
-      },
-    );
-    productImageUrl = result.secure_url;
-  }
+    if (!productImageUrl)
+      return {
+        error:
+          "The image could not be uploaded to the database. Plase try again later.",
+      };
 
-  if (!productImageUrl)
-    return {
-      error:
-        "The image could not be uploaded to the database. Plase try again later.",
-    };
-
-  const newProduct = await prisma.product.create({
-    data: {
+    const productData = {
       name: name.trim(),
       slug,
       brand,
@@ -78,13 +80,50 @@ export const createProduct = async (formData: FormData) => {
       price: Number(price),
       stock: parseInt(stock),
       description: description.trim(),
-    },
-  });
-
-  if (!newProduct)
-    return {
-      error: "The product could not be created. Plase try again later",
     };
+
+    if (productToEditId) {
+      const existingProduct = await findProductById(productToEditId);
+
+      if (!existingProduct) {
+        return {
+          error: "Invalid product to edit id",
+        };
+      }
+
+      const publicId = getClodinaryPublicIdFromUrl(existingProduct.imageUrl);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+
+      const updatedProduct = await prisma.product.update({
+        where: {
+          id: existingProduct.id,
+        },
+        data: productData,
+      });
+
+      if (!updatedProduct) {
+        return {
+          error: "The product could not be updated. Plase try again later",
+        };
+      }
+    } else {
+      const newProduct = await prisma.product.create({
+        data: productData,
+      });
+
+      if (!newProduct)
+        return {
+          error: "The product could not be created. Plase try again later",
+        };
+    }
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Something went wrong.",
+    };
+  }
 
   redirect("/admin");
 };

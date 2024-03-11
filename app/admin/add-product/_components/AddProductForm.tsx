@@ -3,13 +3,15 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { draftToMarkdown } from "markdown-draft-js";
+import { EditorState, ContentState } from "draft-js";
 import {
   TAddProductSchema,
   addProductFormSchema,
 } from "@/lib/validators/addProductValidation";
 import { createProduct } from "../actions";
-import { categories } from "@/app/_components/CategoriesGrid";
+import { Product } from "@prisma/client";
 
+import { categories } from "@/app/_components/CategoriesGrid";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
@@ -24,17 +26,21 @@ import Multiselect from "@/components/ui/multiselect";
 import RichTextEditor from "@/components/RichTextEditor";
 import LoadingButton from "@/components/LoadingButton";
 
-const AddProductForm = () => {
+interface AddProductFormProps {
+  productToEdit: Product | null;
+}
+
+const AddProductForm = ({ productToEdit }: AddProductFormProps) => {
   const { toast } = useToast();
   const form = useForm<TAddProductSchema>({
     defaultValues: {
-      name: "",
+      name: productToEdit?.name || "",
       image: null,
-      price: "",
-      category: "",
-      stock: "",
-      description: "",
-      brand: "",
+      price: productToEdit?.price.toString() || "",
+      category: productToEdit?.category || "",
+      stock: productToEdit?.stock.toString() || "",
+      description: productToEdit?.description || "",
+      brand: productToEdit?.brand || "",
     },
     resolver: zodResolver(addProductFormSchema),
   });
@@ -56,7 +62,7 @@ const AddProductForm = () => {
         formData.append(key, value);
       }
     });
-    const result = await createProduct(formData);
+    const result = await createProduct(formData, productToEdit?.id);
 
     if (result?.error) {
       toast({
@@ -181,6 +187,15 @@ const AddProductForm = () => {
               </FormLabel>
               <FormControl>
                 <RichTextEditor
+                  defaultEditorState={
+                    productToEdit && productToEdit.description
+                      ? EditorState.createWithContent(
+                          ContentState.createFromText(
+                            productToEdit.description,
+                          ),
+                        )
+                      : EditorState.createEmpty()
+                  }
                   ref={field.ref}
                   onChange={(draft) => field.onChange(draftToMarkdown(draft))}
                 />
@@ -195,7 +210,7 @@ const AddProductForm = () => {
             isLoading={isSubmitting}
             type="submit"
           >
-            Create
+            {productToEdit ? "Edit" : "Create"}
           </LoadingButton>
         </div>
       </form>

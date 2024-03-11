@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { findProductBySlug } from "@/lib/utils";
 
 import ProductTemplate from "@/components/ProductTemplate";
+import AdminPanel from "./_components/AdminPanel";
 
 interface UnapprovedProductPageProps {
   params: {
@@ -18,7 +19,12 @@ const UnapprovedProductPage = async ({
 
   if (!product) return notFound();
 
-  return <ProductTemplate product={product} />;
+  return (
+    <ProductTemplate
+      product={product}
+      actionPanel={<AdminPanel productId={product.id} />}
+    />
+  );
 };
 
 export default UnapprovedProductPage;

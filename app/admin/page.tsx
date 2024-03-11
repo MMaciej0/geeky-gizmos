@@ -11,6 +11,15 @@ const AdminPage = async () => {
       approved: false,
     },
   });
+
+  if (unapprovedProducts.length === 0) {
+    return (
+      <MaxWidthWrapper>
+        <h1 className="pt-16 text-center text-2xl">No products to approve.</h1>
+      </MaxWidthWrapper>
+    );
+  }
+
   return (
     <MaxWidthWrapper>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

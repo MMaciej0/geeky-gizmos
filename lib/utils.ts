@@ -2,6 +2,8 @@ import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import { Product } from "@prisma/client";
+import cloudinary from "./cloudinary";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -84,6 +86,12 @@ export const findProductBySlug = async (slug: string) => {
   return product;
 };
 
+export const findProductById = async (id: number) => {
+  const product = await prisma.product.findUnique({ where: { id } });
+  if (!product) return null;
+  return product;
+};
+
 export const formatPrice = (price: number) => {
   if (Number.isInteger(price)) {
     return new Intl.NumberFormat("en-US", {
@@ -97,4 +105,8 @@ export const formatPrice = (price: number) => {
       currency: "USD",
     }).format(price);
   }
+};
+
+export const getClodinaryPublicIdFromUrl = (url: string) => {
+  return url.split("/").pop()?.split(".")[0];
 };

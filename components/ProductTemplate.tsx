@@ -15,14 +15,15 @@ const ProductTemplate = ({ product, actionPanel }: ProductTemplateProps) => {
   return (
     <MaxWidthWrapper>
       <div className="grid grid-cols-1 overflow-hidden pb-20 lg:h-[80vh] lg:grid-cols-2 lg:pb-0">
-        <div>
-          <div className="relative flex justify-center">
+        <div className="flex flex-col items-center justify-center">
+          <div className="relative flex h-full max-h-[640px] w-full max-w-[640px] justify-center overflow-hidden">
             <Image
               src={product.imageUrl}
               alt={product.name}
               width={640}
               height={640}
-              className="object-cover"
+              className="object-cover object-center"
+              priority
             />
           </div>
           <div

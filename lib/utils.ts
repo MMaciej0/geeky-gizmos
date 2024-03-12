@@ -2,8 +2,6 @@ import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { Product } from "@prisma/client";
-import cloudinary from "./cloudinary";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -109,4 +107,97 @@ export const formatPrice = (price: number) => {
 
 export const getClodinaryPublicIdFromUrl = (url: string) => {
   return url.split("/").pop()?.split(".")[0];
+};
+
+export const isEmptySearchParams = (searchParams?: {
+  [key: string]: string | string[];
+}) => {
+  if (!searchParams || typeof searchParams !== "object") return true;
+
+  if (Object.keys(searchParams).length === 0) return true;
+
+  for (const [, value] of Object.entries(searchParams)) {
+    if (
+      (typeof value === "string" && !value.trim()) ||
+      (Array.isArray(value) && value.length === 0)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const convertSearchParamsToArray = (searchParams?: {
+  [key: string]: string | string[];
+}) => {
+  if (isEmptySearchParams(searchParams)) return [];
+
+  return Object.values(searchParams!).flatMap((searchParam) => {
+    if (Array.isArray(searchParam)) {
+      return searchParam.filter((p) => typeof p === "string" && p !== "");
+    } else if (typeof searchParam === "string" && searchParam !== "") {
+      return [searchParam];
+    } else {
+      return [];
+    }
+  });
+};
+
+export const deleteParamAndCreateSearchParams = (
+  param: string,
+  searchParams: { [key: string]: string | string[] },
+) => {
+  const updatedSearchParams: { [key: string]: string | string[] } = {};
+
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (typeof value === "string") {
+      if (value !== param) updatedSearchParams[key] = value;
+    } else if (Array.isArray(value)) {
+      const newValue = value.filter((v) => v !== param);
+      if (newValue.length > 0) updatedSearchParams[key] = newValue;
+    }
+  }
+
+  if (Object.keys(updatedSearchParams).length > 0) {
+    return createURLSearchParams(updatedSearchParams);
+  }
+};
+
+export const createURLSearchParams = (params: {
+  [key: string]: string | string[];
+}) => {
+  const newSearchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (Array.isArray(value)) {
+      value.forEach((val) => newSearchParams.append(key, val));
+    } else {
+      newSearchParams.append(key, value);
+    }
+  }
+  return newSearchParams;
+};
+
+export const convertToSelectable = (
+  data: string[],
+): { label: string; value: string }[] => {
+  const uniqueRecords = new Set<string>();
+
+  return data
+    .map((d) => {
+      const label = capitalizeFirstLetter(d);
+      const value = d.toLowerCase();
+
+      const recordKey = `${label}_${value}`;
+      if (!uniqueRecords.has(recordKey)) {
+        uniqueRecords.add(recordKey);
+        return { label, value };
+      }
+      return null;
+    })
+    .filter(Boolean) as { label: string; value: string }[];
+};
+
+const capitalizeFirstLetter = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };

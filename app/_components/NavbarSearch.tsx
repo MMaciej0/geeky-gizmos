@@ -120,7 +120,9 @@ const NavbarSearch = () => {
                             key={brand}
                             onMouseDown={() => setOpen(false)}
                           >
-                            <Link href={`/products?brand=${encodeURI(brand)}`}>
+                            <Link
+                              href={`/products?brand=${encodeURI(brand.toLowerCase())}`}
+                            >
                               {brand}
                             </Link>
                           </CommandItem>
@@ -136,7 +138,7 @@ const NavbarSearch = () => {
                     <CommandGroup heading="Category:">
                       <CommandItem onMouseDown={() => setOpen(false)}>
                         <Link
-                          href={`/products?category=${encodeURI(searchResult.category)}`}
+                          href={`/products?category=${encodeURI(searchResult.category.toLowerCase())}`}
                         >
                           {searchResult.category}
                         </Link>

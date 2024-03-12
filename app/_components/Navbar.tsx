@@ -31,7 +31,7 @@ const Navbar = async () => {
           </Link>
           <div className="flex items-center space-x-1 md:space-x-4">
             <NavbarSearch />
-            {user?.role === Role.USER && (
+            {(!user || user?.role === Role.USER) && (
               <Link
                 href="/basket"
                 className={cn(

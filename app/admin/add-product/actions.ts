@@ -18,6 +18,25 @@ interface CloudinaryUploadResult {
   secure_url: string;
 }
 
+export const uploadToCloudinary = async (image: File, folderName: string) => {
+  const arrayBuffer = await image.arrayBuffer();
+  const buffer = new Uint8Array(arrayBuffer);
+  const result = await new Promise<CloudinaryUploadResult>(
+    (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: folderName }, (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(result as CloudinaryUploadResult);
+        })
+        .end(buffer);
+    },
+  );
+  return result;
+};
+
 export const createProduct = async (
   formData: FormData,
   productToEditId?: number,
@@ -47,21 +66,7 @@ export const createProduct = async (
   const slug = `${toSlug(name)}-${nanoid(10)}`;
   try {
     if (image) {
-      const arrayBuffer = await image.arrayBuffer();
-      const buffer = new Uint8Array(arrayBuffer);
-      const result = await new Promise<CloudinaryUploadResult>(
-        (resolve, reject) => {
-          cloudinary.uploader
-            .upload_stream({}, (error, result) => {
-              if (error) {
-                reject(error);
-                return;
-              }
-              resolve(result as CloudinaryUploadResult);
-            })
-            .end(buffer);
-        },
-      );
+      const result = await uploadToCloudinary(image, "Products");
       productImageUrl = result.secure_url;
     }
 

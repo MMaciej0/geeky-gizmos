@@ -41,3 +41,10 @@ export const addProductFormSchema = z.object({
 });
 
 export type TAddProductSchema = z.infer<typeof addProductFormSchema>;
+
+export const addCategoryFormSchema = z.object({
+  name: requiredString.max(30, "This name is too long."),
+  image: imageSchema,
+});
+
+export type TAddCategorySchema = z.infer<typeof addCategoryFormSchema>;

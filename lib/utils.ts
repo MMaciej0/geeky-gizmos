@@ -2,6 +2,7 @@ import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import { SearchParams } from "@/app/products/page";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -141,9 +142,7 @@ export const formatPrice = (price: number) => {
   }
 };
 
-export const isEmptySearchParams = (searchParams?: {
-  [key: string]: string | string[];
-}) => {
+export const isEmptySearchParams = (searchParams: SearchParams) => {
   if (!searchParams || typeof searchParams !== "object") return true;
 
   if (Object.keys(searchParams).length === 0) return true;
@@ -160,9 +159,7 @@ export const isEmptySearchParams = (searchParams?: {
   return false;
 };
 
-export const convertSearchParamsToArray = (searchParams?: {
-  [key: string]: string | string[];
-}) => {
+export const convertSearchParamsToArray = (searchParams: SearchParams) => {
   if (isEmptySearchParams(searchParams)) return [];
 
   return Object.values(searchParams!).flatMap((searchParam) => {
@@ -178,7 +175,7 @@ export const convertSearchParamsToArray = (searchParams?: {
 
 export const deleteParamAndCreateSearchParams = (
   param: string,
-  searchParams: { [key: string]: string | string[] },
+  searchParams: SearchParams,
 ) => {
   const updatedSearchParams: { [key: string]: string | string[] } = {};
 

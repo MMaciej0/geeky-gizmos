@@ -7,14 +7,13 @@ import {
   convertSearchParamsToArray,
   deleteParamAndCreateSearchParams,
 } from "@/lib/utils";
+import { SearchParams } from "../page";
 
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface FilterResultsPanelProps {
-  searchParams?: {
-    [key: string]: string | string[];
-  };
+  searchParams: SearchParams;
 }
 
 const FilterResultsPanel: FC<FilterResultsPanelProps> = ({ searchParams }) => {
@@ -26,7 +25,7 @@ const FilterResultsPanel: FC<FilterResultsPanelProps> = ({ searchParams }) => {
   const handleDelete = (param: string) => {
     const newSearchParams = deleteParamAndCreateSearchParams(
       param,
-      searchParams!,
+      searchParams,
     );
 
     if (newSearchParams) {

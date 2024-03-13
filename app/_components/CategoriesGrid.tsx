@@ -13,7 +13,7 @@ const CategoriesGrid = ({ categories }: CategoriesGridProps) => {
     <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
         <Link
-          href={`/products?category=${category.id}`}
+          href={`/products?category=${category.name}`}
           key={category.id}
           className={cn(
             "group relative flex min-h-[100px] items-center justify-center overflow-hidden rounded-md md:min-h-[150px]",

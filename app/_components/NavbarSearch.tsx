@@ -120,9 +120,7 @@ const NavbarSearch = () => {
                             key={brand}
                             onMouseDown={() => setOpen(false)}
                           >
-                            <Link
-                              href={`/products?brand=${encodeURI(brand.toLowerCase())}`}
-                            >
+                            <Link href={`/products?brand=${encodeURI(brand)}`}>
                               {brand}
                             </Link>
                           </CommandItem>
@@ -133,17 +131,25 @@ const NavbarSearch = () => {
                   </>
                 )}
 
-                {searchResult.category && (
+                {searchResult.category && searchResult.category.length > 0 && (
                   <>
-                    <CommandGroup heading="Category:">
-                      <CommandItem onMouseDown={() => setOpen(false)}>
-                        <Link
-                          href={`/products?category=${encodeURI(searchResult.category.toLowerCase())}`}
-                        >
-                          {searchResult.category}
-                        </Link>
-                      </CommandItem>
+                    <CommandGroup heading="Categories matching your search:">
+                      {searchResult.category?.map((category) => {
+                        return (
+                          <CommandItem
+                            key={category}
+                            onMouseDown={() => setOpen(false)}
+                          >
+                            <Link
+                              href={`/products?category=${encodeURI(category)}`}
+                            >
+                              {category}
+                            </Link>
+                          </CommandItem>
+                        );
+                      })}
                     </CommandGroup>
+                    <hr />
                   </>
                 )}
               </>

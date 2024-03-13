@@ -7,7 +7,7 @@ import { signOut } from "@/auth";
 export interface SearchResult {
   productsByName?: Product[];
   productsByNameCounter?: number;
-  category?: string;
+  category?: string[];
   brands?: string[];
 }
 
@@ -25,15 +25,15 @@ export const searchProducts = async (
       take: 4,
     }),
     prisma.product.count({ where: where("name") }),
-    prisma.product.findFirst({
+    prisma.category.findMany({
       where: {
-        category: { contains: query, mode: "insensitive" },
+        name: { contains: query, mode: "insensitive" },
       },
     }),
-    prisma.product.findMany({
-      where: where("brand"),
-      distinct: ["brand"],
-      select: { brand: true },
+    prisma.brand.findMany({
+      where: {
+        name: { contains: query, mode: "insensitive" },
+      },
     }),
   ]);
 
@@ -41,14 +41,11 @@ export const searchProducts = async (
     return null;
   }
 
-  const category = cat?.category.split(",").find((ctg) => ctg.includes(query));
-  const brands = brnd.map((b) => b.brand);
-
   return {
     productsByName,
     productsByNameCounter,
-    category: category && `${category[0].toUpperCase()}${category.slice(1)}`,
-    brands,
+    category: cat.map((c) => c.name),
+    brands: brnd.map((b) => b.name),
   };
 };
 

@@ -1,61 +1,30 @@
 import Link from "next/link";
-import { Prisma } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
-import { paramToFullSearchString } from "@/lib/utils";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import ProductCard from "@/components/ProductCard";
 import FilterResultsPanel from "./_components/FilterResultsPanel";
 import FilterPanel from "./_components/FilterPanel";
 
+export interface SearchParams {
+  categoryId?: string | string[];
+  name?: string;
+  brandId?: string | string[];
+}
+
 interface ProductsPageProps {
-  searchParams: {
-    category?: string;
-    q?: string;
-    name?: string;
-    brand?: string;
-  };
+  searchParams: SearchParams;
 }
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
-  const { category, q, name, brand } = searchParams;
-
-  const searchQuery = q && paramToFullSearchString(q);
-
-  const searchFilter: Prisma.ProductWhereInput = searchQuery
-    ? {
-        OR: [
-          { name: { search: searchQuery } },
-          { category: { search: searchQuery } },
-          { brand: { search: searchQuery } },
-          { description: { search: searchQuery } },
-        ],
-      }
-    : {};
-
-  const where: Prisma.ProductWhereInput = {
-    AND: [
-      searchFilter,
-      category
-        ? { category: { search: paramToFullSearchString(category) } }
-        : {},
-      name ? { name: { contains: name, mode: "insensitive" } } : {},
-      brand ? { brand: { contains: brand, mode: "insensitive" } } : {},
-      { approved: true },
-    ],
-  };
-
-  const products = await prisma.product.findMany({
-    where,
-    orderBy: { createdAt: "asc" },
-  });
+  const products = await fetchProducts(searchParams);
 
   return (
     <MaxWidthWrapper className="px-4 py-20">
       <div className="flex flex-col md:flex-row">
         <FilterResultsPanel searchParams={searchParams} />
-        <FilterPanel products={products} searchParams={searchParams} />
+        {/* <FilterPanel products={products} searchParams={searchParams} /> */}
       </div>
       {products.length === 0 ? (
         <h1 className="py-6 text-center text-2xl font-bold">
@@ -77,3 +46,50 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 };
 
 export default ProductsPage;
+
+const fetchProducts = async (searchParams: SearchParams) => {
+  const { categoryId, name, brandId } = searchParams;
+  const products = await prisma.product.findMany({
+    where: {
+      categories: Array.isArray(categoryId)
+        ? {
+            some: {
+              category: {
+                id: {
+                  in: categoryId.map((c) => Number(c)),
+                },
+              },
+            },
+          }
+        : categoryId
+          ? {
+              some: {
+                category: {
+                  id: Number(categoryId),
+                },
+              },
+            }
+          : {},
+      brandId: Array.isArray(brandId)
+        ? {
+            in: brandId.map((c) => Number(c)),
+          }
+        : brandId
+          ? Number(brandId)
+          : {},
+      name: name
+        ? {
+            contains: name,
+            mode: "insensitive",
+          }
+        : {},
+    },
+    include: {
+      brand: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return products;
+};

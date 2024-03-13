@@ -9,15 +9,6 @@ const AdminPage = async () => {
   const unapprovedProducts = await prisma.product.findMany({
     include: {
       brand: true,
-      categories: {
-        include: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
     },
     where: {
       approved: false,

@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import Image from "next/image";
 
 import { formatPrice } from "@/lib/utils";
-import { ProductWithPayload } from "@/types/product";
+import { ProductWithBrandPayload } from "@/types/product";
 
 import { Badge } from "./ui/badge";
 
 interface ProductCardProps {
-  product: ProductWithPayload;
+  product: ProductWithBrandPayload;
 }
 
 const ProductCard: FC<ProductCardProps> = ({

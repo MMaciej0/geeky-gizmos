@@ -1,13 +1,13 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
 
-import { ProductWithPayload } from "@/types/product";
+import { ProductWithBrandPayload } from "@/types/product";
 
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Markdown from "./Markdown";
 
 interface ProductTemplateProps {
-  product: ProductWithPayload;
+  product: ProductWithBrandPayload;
   actionPanel?: ReactNode;
 }
 

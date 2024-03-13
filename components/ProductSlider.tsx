@@ -1,8 +1,9 @@
 "use client";
 
-import { Product } from "@prisma/client";
 import React, { FC } from "react";
 import Link from "next/link";
+
+import { ProductWithBrandPayload } from "@/types/product";
 
 import {
   Carousel,
@@ -14,7 +15,7 @@ import {
 import ProductCard from "./ProductCard";
 
 interface ProductSliderProps {
-  products: Product[];
+  products: ProductWithBrandPayload[];
 }
 
 const ProductSlider: FC<ProductSliderProps> = ({ products }) => {

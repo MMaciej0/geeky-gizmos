@@ -1,13 +1,13 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
 
-import { Product } from "@prisma/client";
+import { ProductWithPayload } from "@/types/product";
 
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import Markdown from "./Markdown";
 
 interface ProductTemplateProps {
-  product: Product;
+  product: ProductWithPayload;
   actionPanel?: ReactNode;
 }
 
@@ -37,7 +37,7 @@ const ProductTemplate = ({ product, actionPanel }: ProductTemplateProps) => {
           <div className="flex items-center justify-between space-x-4">
             <h3 className="text-2xl font-bold">{product.name}</h3>
           </div>
-          <p>{product.brand}</p>
+          <p>{product.brand.name}</p>
           <Markdown>{product.description}</Markdown>
         </div>
       </div>

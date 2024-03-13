@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import Image from "next/image";
 
 import { formatPrice } from "@/lib/utils";
-import { Product } from "@prisma/client";
+import { ProductWithPayload } from "@/types/product";
 
 import { Badge } from "./ui/badge";
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductWithPayload;
 }
 
 const ProductCard: FC<ProductCardProps> = ({
@@ -30,7 +30,7 @@ const ProductCard: FC<ProductCardProps> = ({
           <h3 className="truncate-2 h-[3em] text-lg font-semibold">{name}</h3>
           <Badge>{formatPrice(price)}</Badge>
         </div>
-        <p className="text-sm">{brand}</p>
+        <p className="text-sm">{brand.name}</p>
       </div>
     </div>
   );

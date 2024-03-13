@@ -8,14 +8,21 @@ import CategoriesGrid from "./_components/CategoriesGrid";
 import ProductSlider from "@/components/ProductSlider";
 
 export default async function Home() {
-  const newestProducts = await prisma.product.findMany({
-    where: { approved: true },
-    include: {
-      brand: true,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 10,
-  });
+  const [newestProducts, categories] = await Promise.all([
+    prisma.product.findMany({
+      where: { approved: true },
+      include: {
+        brand: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+    prisma.category.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   return (
     <main>
@@ -41,10 +48,12 @@ export default async function Home() {
             <ProductSlider products={newestProducts} />
           </section>
         )}
-        <section>
-          <h3 className="my-4 px-4 text-2xl font-bold">Categories</h3>
-          <CategoriesGrid />
-        </section>
+        {categories.length > 0 && (
+          <section>
+            <h3 className="my-4 px-4 text-2xl font-bold">Categories</h3>
+            <CategoriesGrid categories={categories} />
+          </section>
+        )}
       </MaxWidthWrapper>
       <div className="bg-accent pb-10">
         <MaxWidthWrapper className="mt-10">

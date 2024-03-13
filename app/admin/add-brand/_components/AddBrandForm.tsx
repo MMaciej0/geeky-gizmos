@@ -79,7 +79,7 @@ const AddBrandForm = () => {
             isLoading={isSubmitting}
             type="submit"
           >
-            Create category
+            Create brand
           </LoadingButton>
         </div>
       </form>

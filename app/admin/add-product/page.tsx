@@ -1,7 +1,10 @@
+import { notFound } from "next/navigation";
+
+import { findProductById } from "@/lib/utils";
+import prisma from "@/lib/prisma";
+
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import AddProductForm from "./_components/AddProductForm";
-import { findProductById } from "@/lib/utils";
-import { notFound } from "next/navigation";
 
 interface AddProductPageProps {
   searchParams: {
@@ -12,14 +15,30 @@ interface AddProductPageProps {
 const AddProductPage = async ({
   searchParams: { id },
 }: AddProductPageProps) => {
-  const product = id ? await findProductById(Number(id)) : null;
+  const [product, brands, categories] = await Promise.all([
+    id ? findProductById(Number(id)) : null,
+    prisma.brand.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    prisma.category.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   if (id && !product) return notFound();
 
   return (
     <div className="py-10">
       <MaxWidthWrapper className="space-y-8">
-        <AddProductForm productToEdit={product} />
+        <AddProductForm
+          productToEdit={product}
+          brands={brands}
+          categories={categories}
+        />
       </MaxWidthWrapper>
     </div>
   );

@@ -50,7 +50,7 @@ model CategoryToProduct {
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
 
-  @@id([productId, categoryId])
+  @@id(name: "product_category", fields: [productId, categoryId])
   @@map("categoryToProduct")
 }
 

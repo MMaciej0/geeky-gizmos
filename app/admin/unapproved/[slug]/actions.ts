@@ -1,10 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { Product } from "@prisma/client";
 import cloudinary from "@/lib/cloudinary";
 import prisma from "@/lib/prisma";
-import { findProductById, getClodinaryPublicIdFromUrl } from "@/lib/utils";
+import { findProductById } from "@/lib/utils";
 
 type FormState = { error: string } | undefined;
 
@@ -68,15 +67,12 @@ export const deleteProductAction = async (
       };
     }
 
-    const productPublicId = getClodinaryPublicIdFromUrl(product.imageUrl);
-    if (productPublicId) {
-      await prisma.product.delete({
-        where: {
-          id: product.id,
-        },
-      });
-      await cloudinary.uploader.destroy(productPublicId);
-    }
+    await prisma.product.delete({
+      where: {
+        id: product.id,
+      },
+    });
+    await cloudinary.uploader.destroy(product.imagePublicId);
   } catch (error) {
     console.error(error);
     return {

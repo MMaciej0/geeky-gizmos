@@ -9,3 +9,22 @@ export type ProductWithBrandPayload = Prisma.ProductGetPayload<{
     };
   };
 }>;
+
+export type ProductWithBrandAndCategoryNamePayload = Prisma.ProductGetPayload<{
+  include: {
+    brand: {
+      select: {
+        name: true;
+      };
+    };
+    categories: {
+      include: {
+        category: {
+          select: {
+            name: true;
+          };
+        };
+      };
+    };
+  };
+}>;

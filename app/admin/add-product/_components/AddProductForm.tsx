@@ -11,7 +11,7 @@ import {
   addProductFormSchema,
 } from "@/lib/validators/addProductValidation";
 import { createOrUpdateProduct } from "../actions";
-import { ProductWithPayload } from "@/types/product";
+import { ProductWithBrandAndCategoryNamePayload } from "@/types/product";
 import { Brand, Category } from "@prisma/client";
 import { cn } from "@/lib/utils";
 
@@ -44,7 +44,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface AddProductFormProps {
-  productToEdit: ProductWithPayload | null;
+  productToEdit: ProductWithBrandAndCategoryNamePayload | null;
   brands: Brand[];
   categories: Category[];
 }

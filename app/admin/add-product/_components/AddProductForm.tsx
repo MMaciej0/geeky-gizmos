@@ -1,17 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { draftToMarkdown } from "markdown-draft-js";
 import { EditorState, ContentState } from "draft-js";
+
 import {
   TAddProductSchema,
   addProductFormSchema,
 } from "@/lib/validators/addProductValidation";
-import { createProduct } from "../actions";
-import { Product } from "@prisma/client";
+import { createOrUpdateProduct } from "../actions";
+import { ProductWithPayload } from "@/types/product";
+import { Brand, Category } from "@prisma/client";
+import { cn } from "@/lib/utils";
 
-import { categories } from "@/app/_components/CategoriesGrid";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
@@ -25,22 +29,43 @@ import { Input } from "@/components/ui/input";
 import Multiselect from "@/components/ui/multiselect";
 import RichTextEditor from "@/components/RichTextEditor";
 import LoadingButton from "@/components/LoadingButton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
 
 interface AddProductFormProps {
-  productToEdit: Product | null;
+  productToEdit: ProductWithPayload | null;
+  brands: Brand[];
+  categories: Category[];
 }
 
-const AddProductForm = ({ productToEdit }: AddProductFormProps) => {
+const AddProductForm = ({
+  productToEdit,
+  categories,
+  brands,
+}: AddProductFormProps) => {
+  const [isBrandListOpen, setIsBrandListOpen] = useState(false);
   const { toast } = useToast();
   const form = useForm<TAddProductSchema>({
     defaultValues: {
       name: productToEdit?.name || "",
       image: null,
       price: productToEdit?.price.toString() || "",
-      category: productToEdit?.category || "",
+      category:
+        productToEdit?.categories.map((cat) => cat.categoryId).join(",") || "",
       stock: productToEdit?.stock.toString() || "",
       description: productToEdit?.description || "",
-      brand: productToEdit?.brand || "",
+      brand: productToEdit?.brandId.toString() || "",
     },
     resolver: zodResolver(addProductFormSchema),
   });
@@ -54,6 +79,13 @@ const AddProductForm = ({ productToEdit }: AddProductFormProps) => {
     formState: { isSubmitting },
   } = form;
   const category = watch("category");
+  const selectableCategory = category
+    ? category.split(",").map((c) => ({
+        value: c,
+        label: categories.find((cat) => cat.id === Number(c))!.name,
+      }))
+    : [];
+  const brand = watch("brand");
 
   const onSubmit: SubmitHandler<TAddProductSchema> = async (data) => {
     const formData = new FormData();
@@ -62,7 +94,7 @@ const AddProductForm = ({ productToEdit }: AddProductFormProps) => {
         formData.append(key, value);
       }
     });
-    const result = await createProduct(formData, productToEdit?.id);
+    const result = await createOrUpdateProduct(formData, productToEdit?.id);
 
     if (result?.error) {
       toast({
@@ -94,11 +126,55 @@ const AddProductForm = ({ productToEdit }: AddProductFormProps) => {
         <FormField
           control={control}
           name="brand"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Brand</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Product brand..." />
+                <Popover
+                  open={isBrandListOpen}
+                  onOpenChange={setIsBrandListOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="flex w-full justify-between"
+                      variant="outline"
+                    >
+                      {brand
+                        ? brands.find((b) => b.id === Number(brand))?.name
+                        : "Select brand..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[300px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search brand..." />
+                      <CommandEmpty>No brand found.</CommandEmpty>
+                      <CommandGroup>
+                        {brands.map((b) => (
+                          <CommandItem
+                            key={b.id}
+                            value={b.id.toString()}
+                            onSelect={(currentValue) => {
+                              setValue("brand", currentValue);
+                              trigger("brand");
+                              setIsBrandListOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                brand === b.id.toString()
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            {b.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,10 +209,16 @@ const AddProductForm = ({ productToEdit }: AddProductFormProps) => {
               <FormLabel>Category</FormLabel>
               <FormControl>
                 <Multiselect
-                  selectables={categories}
-                  selected={category.length > 0 ? category.split(",") : []}
+                  selectables={categories.map((cat) => ({
+                    value: cat.id.toString(),
+                    label: cat.name,
+                  }))}
+                  selected={selectableCategory}
                   setSelected={(newCategories) => {
-                    setValue("category", newCategories.join(","));
+                    setValue(
+                      "category",
+                      newCategories.map((c) => c.value).join(","),
+                    );
                     trigger("category");
                   }}
                   placeholder="Select category..."

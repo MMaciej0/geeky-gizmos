@@ -79,13 +79,49 @@ export const findUserById = async (id: string) => {
 };
 
 export const findProductBySlug = async (slug: string) => {
-  const product = await prisma.product.findUnique({ where: { slug } });
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    include: {
+      brand: {
+        select: {
+          name: true,
+        },
+      },
+      categories: {
+        include: {
+          category: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
   if (!product) return null;
   return product;
 };
 
 export const findProductById = async (id: number) => {
-  const product = await prisma.product.findUnique({ where: { id } });
+  const product = await prisma.product.findUnique({
+    where: { id },
+    include: {
+      brand: {
+        select: {
+          name: true,
+        },
+      },
+      categories: {
+        include: {
+          category: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
   if (!product) return null;
   return product;
 };
@@ -103,10 +139,6 @@ export const formatPrice = (price: number) => {
       currency: "USD",
     }).format(price);
   }
-};
-
-export const getClodinaryPublicIdFromUrl = (url: string) => {
-  return url.split("/").pop()?.split(".")[0];
 };
 
 export const isEmptySearchParams = (searchParams?: {
@@ -198,6 +230,6 @@ export const convertToSelectable = (
     .filter(Boolean) as { label: string; value: string }[];
 };
 
-const capitalizeFirstLetter = (str: string): string => {
+export const capitalizeFirstLetter = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };

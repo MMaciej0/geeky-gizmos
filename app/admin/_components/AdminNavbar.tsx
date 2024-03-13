@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+
 import { cn } from "@/lib/utils";
+
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 
 const AdminNavbar = () => {
   const pathname = usePathname();
@@ -13,7 +14,7 @@ const AdminNavbar = () => {
 
   return (
     <MaxWidthWrapper className="py-6">
-      <ul className="flex justify-evenly space-x-2 rounded-md border-[1.5px] p-1">
+      <ul className="flex flex-col justify-evenly space-x-2 rounded-md border-[1.5px] p-1 md:flex-row">
         <li
           className={cn(
             "w-full rounded-lg text-center font-semibold transition hover:bg-accent",
@@ -31,7 +32,27 @@ const AdminNavbar = () => {
           )}
         >
           <Link href="/admin/add-product" className="block w-full p-2">
-            {productToEdit ? "Edit" : "Add"}
+            {productToEdit ? "Edit Product" : "Add Product"}
+          </Link>
+        </li>
+        <li
+          className={cn(
+            "w-full rounded-lg text-center font-semibold transition hover:bg-accent",
+            pathname === "/admin/add-category" && "bg-accent",
+          )}
+        >
+          <Link href="/admin/add-category" className="block w-full p-2">
+            Add category
+          </Link>
+        </li>
+        <li
+          className={cn(
+            "w-full rounded-lg text-center font-semibold transition hover:bg-accent",
+            pathname === "/admin/add-brand" && "bg-accent",
+          )}
+        >
+          <Link href="/admin/add-brand" className="block w-full p-2">
+            Add brand
           </Link>
         </li>
       </ul>

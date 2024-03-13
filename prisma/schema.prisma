@@ -10,20 +10,50 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  slug        String   @unique
-  name        String
-  brand       String
-  description String
-  imageUrl    String
-  price       Float
-  stock       Int
-  category    String
-  approved    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int                 @id @default(autoincrement())
+  slug          String              @unique
+  name          String
+  brand         Brand               @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId       Int
+  description   String
+  imageUrl      String
+  imagePublicId String
+  price         Float
+  stock         Int
+  categories    CategoryToProduct[]
+  approved      Boolean             @default(false)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
   @@map("products")
+}
+
+model Category {
+  id            Int                 @id @default(autoincrement())
+  name          String
+  imageUrl      String
+  imagePublicId String
+  products      CategoryToProduct[]
+
+  @@map("categories")
+}
+
+model Brand {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+
+  @@map("brands")
+}
+
+model CategoryToProduct {
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+
+  @@id(name: "product_category", fields: [productId, categoryId])
+  @@map("categoryToProduct")
 }
 
 enum Role {

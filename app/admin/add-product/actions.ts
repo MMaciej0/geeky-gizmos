@@ -5,12 +5,7 @@ import { nanoid } from "nanoid";
 
 import { Role } from "@prisma/client";
 import prisma from "@/lib/prisma";
-import {
-  findProductById,
-  getClodinaryPublicIdFromUrl,
-  getUser,
-  toSlug,
-} from "@/lib/utils";
+import { findProductById, getUser, toSlug } from "@/lib/utils";
 import { addProductFormSchema } from "@/lib/validators/addProductValidation";
 import cloudinary from "@/lib/cloudinary";
 

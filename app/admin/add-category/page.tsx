@@ -1,5 +1,3 @@
-import React from "react";
-
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import AddCategoryForm from "./_components/AddCategoryForm";
 

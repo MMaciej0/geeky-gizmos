@@ -1,6 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
 
 const LoadingPage = () => {
   return (

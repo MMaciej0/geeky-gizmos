@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+
 import { cn } from "@/lib/utils";
+
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 
 const AdminNavbar = () => {
   const pathname = usePathname();

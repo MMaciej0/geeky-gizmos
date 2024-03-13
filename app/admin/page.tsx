@@ -1,9 +1,9 @@
-import React from "react";
+import Link from "next/link";
 
 import prisma from "@/lib/prisma";
+
 import ProductCard from "@/components/ProductCard";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import Link from "next/link";
 
 const AdminPage = async () => {
   const unapprovedProducts = await prisma.product.findMany({

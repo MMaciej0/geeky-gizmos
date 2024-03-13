@@ -16,31 +16,8 @@ import cloudinary from "@/lib/cloudinary";
 
 interface CloudinaryUploadResult {
   secure_url: string;
+  public_id: string;
 }
-
-export const uploadToCloudinary = async (image: File, folderName: string) => {
-  try {
-    const arrayBuffer = await image.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const result = await new Promise<CloudinaryUploadResult>(
-      (resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream({ folder: folderName }, (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result as CloudinaryUploadResult);
-            }
-          })
-          .end(buffer);
-      },
-    );
-    return result.secure_url;
-  } catch (error) {
-    console.error("Error uploading image to Cloudinary:", error);
-    throw new Error("Failed to upload image to Cloudinary");
-  }
-};
 
 export const createOrUpdateProduct = async (
   formData: FormData,
@@ -64,11 +41,18 @@ export const createOrUpdateProduct = async (
     const slug = `${toSlug(name)}-${nanoid(10)}`;
 
     let productImageUrl: string | undefined = undefined;
+    let productImagePublicId: string | undefined = undefined;
+
     if (image) {
-      productImageUrl = await uploadToCloudinary(image, "Products");
+      const { secureUrl, publicId } = await uploadToCloudinary(
+        image,
+        "Products",
+      );
+      productImageUrl = secureUrl;
+      productImagePublicId = publicId;
     }
 
-    if (!productImageUrl) {
+    if (!productImageUrl && !productImagePublicId) {
       return {
         error:
           "Failed to upload the image to the database. Please try again later.",
@@ -79,7 +63,8 @@ export const createOrUpdateProduct = async (
       name: name.trim(),
       slug,
       brandId: Number(brand),
-      imageUrl: productImageUrl,
+      imageUrl: productImageUrl!,
+      imagePublicId: productImagePublicId!,
       price: Number(price),
       stock: parseInt(stock),
       description: description.trim(),
@@ -93,10 +78,7 @@ export const createOrUpdateProduct = async (
         return { error: "Invalid product to edit ID." };
       }
 
-      const publicId = getClodinaryPublicIdFromUrl(existingProduct.imageUrl);
-      if (publicId) {
-        await cloudinary.uploader.destroy(publicId);
-      }
+      await cloudinary.uploader.destroy(existingProduct.imagePublicId);
 
       await prisma.product.update({
         where: { id: existingProduct.id },
@@ -161,5 +143,29 @@ const updateProductCategories = async (
   } catch (error) {
     console.error("Error updating product categories:", error);
     throw new Error("Failed to update product categories");
+  }
+};
+
+export const uploadToCloudinary = async (image: File, folderName: string) => {
+  try {
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+    const result = await new Promise<CloudinaryUploadResult>(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: folderName }, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result as CloudinaryUploadResult);
+            }
+          })
+          .end(buffer);
+      },
+    );
+    return { secureUrl: result.secure_url, publicId: result.public_id };
+  } catch (error) {
+    console.error("Error uploading image to Cloudinary:", error);
+    throw new Error("Failed to upload image to Cloudinary");
   }
 };

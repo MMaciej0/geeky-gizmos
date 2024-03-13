@@ -62,11 +62,10 @@ const AddProductForm = ({
       image: null,
       price: productToEdit?.price.toString() || "",
       category:
-        productToEdit?.categories.map((cat) => cat.category.name).join(",") ||
-        "",
+        productToEdit?.categories.map((cat) => cat.categoryId).join(",") || "",
       stock: productToEdit?.stock.toString() || "",
       description: productToEdit?.description || "",
-      brand: productToEdit?.brand.name || "",
+      brand: productToEdit?.brandId.toString() || "",
     },
     resolver: zodResolver(addProductFormSchema),
   });

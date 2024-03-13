@@ -142,7 +142,9 @@ export const formatPrice = (price: number) => {
 };
 
 export const getClodinaryPublicIdFromUrl = (url: string) => {
-  return url.split("/").pop()?.split(".")[0];
+  const publicIdRegex = /\/v\d+\/[^./]+/;
+  const match = url.match(publicIdRegex);
+  return match ? match[0].replace(/\/v\d+\//, "") : null;
 };
 
 export const isEmptySearchParams = (searchParams?: {

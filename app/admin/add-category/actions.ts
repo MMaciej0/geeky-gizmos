@@ -26,15 +26,20 @@ export const createCategory = async (formData: FormData) => {
 
   const { name, image } = validatedProductData.data;
 
-  let productImageUrl: string | undefined = undefined;
+  let categoryImageUrl: string | undefined = undefined;
+  let categoryImagePublicId: string | undefined = undefined;
 
   try {
     if (image) {
-      const result = await uploadToCloudinary(image, "categories");
-      productImageUrl = result.secure_url;
+      const { publicId, secureUrl } = await uploadToCloudinary(
+        image,
+        "categories",
+      );
+      categoryImageUrl = secureUrl;
+      categoryImagePublicId = publicId;
     }
 
-    if (!productImageUrl)
+    if (!categoryImageUrl && !categoryImagePublicId)
       return {
         error:
           "The image could not be uploaded to the database. Plase try again later.",
@@ -43,7 +48,8 @@ export const createCategory = async (formData: FormData) => {
     const newCategory = await prisma.category.create({
       data: {
         name,
-        imageUrl: productImageUrl,
+        imageUrl: categoryImageUrl!,
+        imagePublicId: categoryImagePublicId!,
       },
     });
 

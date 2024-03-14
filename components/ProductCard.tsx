@@ -15,7 +15,7 @@ const ProductCard: FC<ProductCardProps> = ({
 }) => {
   return (
     <div className="overflow-hidden rounded-lg border shadow-xl transition-transform duration-300 hover:scale-[104%]">
-      <div className="relative min-h-[220px]">
+      <div className="relative min-h-[220px] w-full">
         <Image
           src={imageUrl}
           alt={name}

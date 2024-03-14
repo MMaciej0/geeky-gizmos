@@ -1,46 +1,53 @@
 "use client";
 
-import React, { FC, useEffect, useMemo, useState } from "react";
-import { Product } from "@prisma/client";
-
-import { SlidersHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import Multiselect from "@/components/ui/multiselect";
-import { Label } from "@/components/ui/label";
-import { convertToSelectable, createURLSearchParams } from "@/lib/utils";
-import { useDebounce } from "@/lib/hooks/useDebounce";
+import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { Brand, Category } from "@prisma/client";
+import { cn, convertToSelectable, createURLSearchParams } from "@/lib/utils";
+import { SearchParams } from "../page";
+import { useDebounce } from "@/lib/hooks/useDebounce";
+
+import { SlidersHorizontal, X } from "lucide-react";
+import Multiselect from "@/components/ui/multiselect";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 interface FilterPanelProps {
-  products: Product[];
-  searchParams?: {
-    [key: string]: string | string[];
-  };
+  searchParams: SearchParams;
+  brands: Brand[];
+  categories: Category[];
 }
 
-const FilterPanel: FC<FilterPanelProps> = ({ products, searchParams }) => {
+const FilterPanel: FC<FilterPanelProps> = ({
+  searchParams,
+  brands,
+  categories,
+}) => {
   const router = useRouter();
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(() => {
-    return Array.isArray(searchParams?.brand)
-      ? searchParams.brand
-      : typeof searchParams?.brand === "string"
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [sortMethod, setSortMethod] = useState(searchParams.sort || "");
+  const [selectedBrands, setSelectedBrands] = useState<string[]>(
+    Array.isArray(searchParams.brand)
+      ? [...searchParams.brand]
+      : searchParams.brand
         ? [searchParams.brand]
-        : [];
-  });
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
-    return Array.isArray(searchParams?.category)
-      ? searchParams.category
-      : typeof searchParams?.category === "string"
+        : [],
+  );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    Array.isArray(searchParams.category)
+      ? [...searchParams.category]
+      : searchParams.category
         ? [searchParams.category]
-        : [];
-  });
+        : [],
+  );
 
   const debouncedBrands = useDebounce(selectedBrands);
   const debouncedCategories = useDebounce(selectedCategories);
@@ -50,59 +57,83 @@ const FilterPanel: FC<FilterPanelProps> = ({ products, searchParams }) => {
       ...searchParams,
       brand: debouncedBrands,
       category: debouncedCategories,
+      sort: sortMethod,
     };
 
     const newURLSearchParams = createURLSearchParams(newSearchParams);
-
     router.push(`/products?${newURLSearchParams}`);
-  }, [debouncedBrands, debouncedCategories]);
-
-  const brands = useMemo(() => {
-    return convertToSelectable(products.map((prod) => prod.brand));
-  }, [products]);
-  const categories = useMemo(() => {
-    const prodCategories = products.flatMap((prod) => prod.category.split(","));
-    return convertToSelectable(prodCategories);
-  }, [products]);
+  }, [debouncedBrands, debouncedCategories, sortMethod]);
 
   return (
-    <div className="ml-auto flex w-full space-x-2 pb-6 md:max-w-[250px]">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="lg" className="text-md w-full">
-            Sort & Filter
-            <SlidersHorizontal size={20} className="ml-2" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Filters</SheetTitle>
-          </SheetHeader>
-          <form>
+    <section className="mb-16">
+      <Button
+        variant="outline"
+        className="w-full lg:hidden"
+        onClick={() => setFiltersVisible(true)}
+      >
+        Filters & Sorting
+      </Button>
+      <div className={cn(filtersVisible && "fixed inset-0 z-50 bg-black/80")}>
+        <div
+          className={cn(
+            "fixed inset-y-0 right-0 z-50 h-full w-full translate-x-full gap-4 border-l bg-background p-6 shadow-lg transition duration-300 ease-in-out animate-out slide-out-to-right sm:max-w-[450px] lg:static lg:w-[320px] lg:translate-x-0 lg:animate-none lg:rounded-lg lg:border",
+            filtersVisible &&
+              "translate-x-0 duration-500 animate-in slide-in-from-right",
+          )}
+        >
+          <div className="relative border-b p-6">
+            <h2 className="text-center text-2xl font-bold">Filters</h2>
+            <Button
+              onClick={() => setFiltersVisible(false)}
+              size="icon"
+              variant="ghost"
+              className="absolute right-[1.5rem] top-[1.5rem] lg:hidden"
+            >
+              <X />
+            </Button>
+          </div>
+          <div className="m-auto flex max-w-[450px] flex-col space-y-8 px-2 py-6">
             <div>
               <Label>Brands</Label>
               <Multiselect
-                selectables={brands}
-                selected={selectedBrands}
-                setSelected={(selectables) => setSelectedBrands(selectables)}
-                placeholder="Select brands..."
+                selectables={convertToSelectable(brands.map((b) => b.name))}
+                selected={convertToSelectable(selectedBrands)}
+                setSelected={(s) => setSelectedBrands(s.map((s) => s.label))}
+                placeholder="Select brand..."
               />
             </div>
             <div>
               <Label>Categories</Label>
               <Multiselect
-                selectables={categories}
-                selected={selectedCategories}
-                setSelected={(selectables) =>
-                  setSelectedCategories(selectables)
+                selectables={convertToSelectable(categories.map((c) => c.name))}
+                selected={convertToSelectable(selectedCategories)}
+                setSelected={(s) =>
+                  setSelectedCategories(s.map((s) => s.label))
                 }
                 placeholder="Select category..."
               />
             </div>
-          </form>
-        </SheetContent>
-      </Sheet>
-    </div>
+            <div>
+              <Label>Sort</Label>
+              <Select
+                onValueChange={(val) => setSortMethod(val)}
+                defaultValue={sortMethod}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select sort method..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="oldest">Oldest</SelectItem>
+                  <SelectItem value="cheapest">Cheapest</SelectItem>
+                  <SelectItem value="expensive">Most Expensive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

@@ -42,7 +42,7 @@ const Multiselect: FC<multiselectProps> = ({
         }
       }
     },
-    [],
+    [searchValue, setSelected],
   );
 
   const selectedValues = useMemo(

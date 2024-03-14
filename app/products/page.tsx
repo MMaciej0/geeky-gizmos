@@ -4,13 +4,20 @@ import prisma from "@/lib/prisma";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import ProductCard from "@/components/ProductCard";
-import FilterResultsPanel from "./_components/FilterResultsPanel";
 import FilterPanel from "./_components/FilterPanel";
 
+interface SortOptions {
+  newest: { key: string; method: "desc" };
+  oldest: { key: string; method: "asc" };
+  cheapest: { key: string; method: "asc" };
+  expensive: { key: string; method: "desc" };
+}
+
 export interface SearchParams {
-  categoryId?: string | string[];
+  category?: string | string[];
   name?: string;
-  brandId?: string | string[];
+  brand?: string | string[];
+  sort?: keyof SortOptions;
 }
 
 interface ProductsPageProps {
@@ -18,28 +25,33 @@ interface ProductsPageProps {
 }
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
-  const products = await fetchProducts(searchParams);
+  const [products, brands, categories] = await Promise.all([
+    fetchProducts(searchParams),
+    fetchBrands(searchParams),
+    fetchCategories(searchParams),
+  ]);
 
   return (
-    <MaxWidthWrapper className="px-4 py-20">
-      <div className="flex flex-col md:flex-row">
-        <FilterResultsPanel searchParams={searchParams} />
-        {/* <FilterPanel products={products} searchParams={searchParams} /> */}
+    <MaxWidthWrapper className="py-20 lg:flex lg:px-8">
+      <div className="lg:mr-8 xl:mr-16">
+        <FilterPanel
+          searchParams={searchParams}
+          brands={brands}
+          categories={categories}
+        />
       </div>
       {products.length === 0 ? (
         <h1 className="py-6 text-center text-2xl font-bold">
           No Products found. Please change your searching criteria.
         </h1>
       ) : (
-        <>
-          <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {products.map((prod) => (
-              <Link key={prod.id} href={`/products/${prod.slug}`}>
-                <ProductCard product={prod} />
-              </Link>
-            ))}
-          </section>
-        </>
+        <section className="grid w-full grid-cols-1 gap-x-3 gap-y-6 md:grid-cols-2 xl:grid-cols-3">
+          {products.map((prod) => (
+            <Link key={prod.id} href={`/products/${prod.slug}`}>
+              <ProductCard product={prod} />
+            </Link>
+          ))}
+        </section>
       )}
     </MaxWidthWrapper>
   );
@@ -47,35 +59,59 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
 
 export default ProductsPage;
 
+const sortCheatSheet: SortOptions = {
+  newest: { key: "createdAt", method: "desc" },
+  oldest: { key: "createdAt", method: "asc" },
+  cheapest: { key: "price", method: "asc" },
+  expensive: { key: "price", method: "desc" },
+};
+
 const fetchProducts = async (searchParams: SearchParams) => {
-  const { categoryId, name, brandId } = searchParams;
+  const { category, name, brand, sort } = searchParams;
+  const orderBy = sort
+    ? { [sortCheatSheet[sort].key]: sortCheatSheet[sort].method }
+    : {};
   const products = await prisma.product.findMany({
     where: {
-      categories: Array.isArray(categoryId)
+      categories: Array.isArray(category)
         ? {
             some: {
               category: {
-                id: {
-                  in: categoryId.map((c) => Number(c)),
+                name: {
+                  in: category,
                 },
               },
             },
           }
-        : categoryId
+        : category
           ? {
               some: {
                 category: {
-                  id: Number(categoryId),
+                  name: {
+                    contains: category,
+                    mode: "insensitive",
+                  },
                 },
               },
             }
           : {},
-      brandId: Array.isArray(brandId)
+      brand: Array.isArray(brand)
         ? {
-            in: brandId.map((c) => Number(c)),
+            is: {
+              name: {
+                in: brand,
+              },
+            },
           }
-        : brandId
-          ? Number(brandId)
+        : brand
+          ? {
+              is: {
+                name: {
+                  contains: brand,
+                  mode: "insensitive",
+                },
+              },
+            }
           : {},
       name: name
         ? {
@@ -87,9 +123,91 @@ const fetchProducts = async (searchParams: SearchParams) => {
     include: {
       brand: true,
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy,
   });
   return products;
+};
+
+const fetchBrands = async (searchParams: SearchParams) => {
+  const { category } = searchParams;
+
+  const brands = await prisma.brand.findMany({
+    where: {
+      products: Array.isArray(category)
+        ? {
+            some: {
+              categories: {
+                some: {
+                  category: {
+                    name: {
+                      in: category,
+                    },
+                  },
+                },
+              },
+            },
+          }
+        : category
+          ? {
+              some: {
+                categories: {
+                  some: {
+                    category: {
+                      name: {
+                        contains: category,
+                        mode: "insensitive",
+                      },
+                    },
+                  },
+                },
+              },
+            }
+          : {},
+    },
+    include: { products: true },
+  });
+  return brands;
+};
+
+const fetchCategories = async (searchParams: SearchParams) => {
+  const { brand } = searchParams;
+
+  const categories = await prisma.category.findMany({
+    where: {
+      products: Array.isArray(brand)
+        ? {
+            some: {
+              product: {
+                is: {
+                  brand: {
+                    name: {
+                      in: brand,
+                    },
+                  },
+                },
+              },
+            },
+          }
+        : brand
+          ? {
+              some: {
+                product: {
+                  is: {
+                    brand: {
+                      name: {
+                        contains: brand,
+                        mode: "insensitive",
+                      },
+                    },
+                  },
+                },
+              },
+            }
+          : {},
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+  return categories;
 };

@@ -200,7 +200,7 @@ export const createURLSearchParams = (params: {
   for (const [key, value] of Object.entries(params)) {
     if (Array.isArray(value)) {
       value.forEach((val) => newSearchParams.append(key, val));
-    } else {
+    } else if (value !== "") {
       newSearchParams.append(key, value);
     }
   }

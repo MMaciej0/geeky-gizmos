@@ -5,6 +5,12 @@ import prisma from "@/lib/prisma";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import ProductCard from "@/components/ProductCard";
 import FilterPanel from "./_components/FilterPanel";
+import { Suspense } from "react";
+import ProductsLoadingSkeleton from "@/components/ProductsLoadingSkeleton";
+import Await from "@/components/Await";
+import ProductsList from "./_components/ProductsList";
+import { ProductWithBrandPayload } from "@/types/product";
+import { nanoid } from "nanoid";
 
 interface SortOptions {
   newest: { key: string; method: "desc" };
@@ -25,35 +31,30 @@ interface ProductsPageProps {
 }
 
 const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
-  const [products, brands, categories] = await Promise.all([
-    fetchProducts(searchParams),
+  const [brands, categories] = await Promise.all([
     fetchBrands(searchParams),
     fetchCategories(searchParams),
   ]);
 
   return (
-    <MaxWidthWrapper className="py-20 lg:flex lg:px-8">
-      <div className="lg:mr-8 xl:mr-16">
-        <FilterPanel
-          searchParams={searchParams}
-          brands={brands}
-          categories={categories}
-        />
-      </div>
-      {products.length === 0 ? (
-        <h1 className="py-6 text-center text-2xl font-bold">
-          No Products found. Please change your searching criteria.
-        </h1>
-      ) : (
-        <section className="grid w-full grid-cols-1 gap-x-3 gap-y-6 md:grid-cols-2 xl:grid-cols-3">
-          {products.map((prod) => (
-            <Link key={prod.id} href={`/products/${prod.slug}`}>
-              <ProductCard product={prod} />
-            </Link>
-          ))}
-        </section>
-      )}
-    </MaxWidthWrapper>
+    <div key={nanoid(10)}>
+      <MaxWidthWrapper className="py-20 lg:flex lg:px-8">
+        <div className="lg:mr-8 xl:mr-16">
+          <FilterPanel
+            searchParams={searchParams}
+            brands={brands}
+            categories={categories}
+          />
+        </div>
+        <Suspense fallback={<ProductsLoadingSkeleton qty={9} />}>
+          <Await promise={fetchProducts(searchParams)}>
+            {(products: ProductWithBrandPayload[]) => (
+              <ProductsList products={products} />
+            )}
+          </Await>
+        </Suspense>
+      </MaxWidthWrapper>
+    </div>
   );
 };
 

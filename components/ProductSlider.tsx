@@ -33,7 +33,7 @@ const ProductSlider: FC<ProductSliderProps> = ({ products }) => {
             className="pl-10 md:basis-1/2 lg:basis-1/3"
           >
             <Link
-              href={`product/${product.slug}`}
+              href={`products/${product.slug}`}
               className="flex flex-col overflow-hidden rounded-lg shadow-lg"
             >
               <ProductCard product={product} />

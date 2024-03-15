@@ -90,7 +90,7 @@ const NavbarSearch = () => {
                                 key={id}
                                 onMouseDown={() => setOpen(false)}
                               >
-                                <Link href={`/product/${encodeURI(slug)}`}>
+                                <Link href={`/products/${encodeURI(slug)}`}>
                                   {name}
                                 </Link>
                               </CommandItem>

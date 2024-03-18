@@ -14,7 +14,7 @@ interface ProductTemplateProps {
 const ProductTemplate = ({ product, actionPanel }: ProductTemplateProps) => {
   return (
     <MaxWidthWrapper>
-      <div className="grid grid-cols-1 overflow-hidden pb-20 lg:h-[80vh] lg:grid-cols-2 lg:pb-0">
+      <div className="grid grid-cols-1 overflow-hidden pb-20 lg:h-[84vh] lg:grid-cols-2 lg:pb-0">
         <div className="flex flex-col items-center">
           <div className="relative flex h-full max-h-[640px] w-full max-w-[640px] justify-center overflow-hidden">
             <Image
@@ -28,7 +28,7 @@ const ProductTemplate = ({ product, actionPanel }: ProductTemplateProps) => {
           </div>
           <div
             className="fixed bottom-0 left-0 right-0 z-50
-         w-full backdrop-blur-md lg:static"
+         w-full backdrop-blur-sm lg:static"
           >
             {actionPanel}
           </div>

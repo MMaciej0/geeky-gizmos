@@ -8,7 +8,6 @@ export default middleware((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  console.log(nextUrl.pathname);
   const isApiAuthRoute = apiAuthPrefix.startsWith(nextUrl.pathname);
   const isPublicRoute = publicRoutes.some((route) => {
     const regex = new RegExp(`^${route.replace(/\[.*?\]/, ".*")}$`);

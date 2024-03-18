@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 
-import { findProductBySlug, formatPrice } from "@/lib/utils";
+import { findProductBySlug } from "@/lib/utils";
+import { getBasket } from "@/lib/basket";
 
-import { ShoppingBasket } from "lucide-react";
 import ProductTemplate from "@/components/ProductTemplate";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Button } from "@/components/ui/button";
+import AddToCartPanel from "../_components/AddToCartPanel";
 
 interface ProductPageProps {
   params: {
@@ -14,28 +14,24 @@ interface ProductPageProps {
 }
 
 const ProductPage = async ({ params: { slug } }: ProductPageProps) => {
-  const product = await findProductBySlug(slug);
+  const [product, basket] = await Promise.all([
+    findProductBySlug(slug),
+    getBasket(),
+  ]);
 
   if (!product) return notFound();
 
-  const addToCartPanel = (
-    <div className="py-10 text-center">
-      <div className="flex items-center justify-center lg:shadow-md">
-        <div className="flex w-full max-w-[450px] items-center rounded-md bg-accent lg:max-w-full">
-          <p className="w-full text-center text-lg font-bold">
-            {formatPrice(product.price)}
-          </p>
-          <Button className="px-12">
-            Add to cart <ShoppingBasket className="ml-2" size={20} />
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+  const inBasketItemQty =
+    basket?.items.find((i) => i.product.id === product.id)?.quantity || 0;
 
   return (
     <MaxWidthWrapper className="py-10">
-      <ProductTemplate product={product} actionPanel={addToCartPanel} />
+      <ProductTemplate
+        product={product}
+        actionPanel={
+          <AddToCartPanel product={product} inBasketItemQty={inBasketItemQty} />
+        }
+      />
     </MaxWidthWrapper>
   );
 };

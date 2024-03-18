@@ -1,4 +1,5 @@
 import { twMerge } from "tailwind-merge";
+import Crypto from "crypto-js";
 import { type ClassValue, clsx } from "clsx";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
@@ -229,4 +230,23 @@ export const convertToSelectable = (
 
 export const capitalizeFirstLetter = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const encryptString = (str: string) => {
+  try {
+    return Crypto.AES.encrypt(str, process.env.CRYPTO_KEY!).toString();
+  } catch (error) {
+    console.error("Encryption error:", error);
+    throw new Error("Encryption failed.");
+  }
+};
+
+export const decryptData = (encryptedString: string) => {
+  try {
+    const bytes = Crypto.AES.decrypt(encryptedString, process.env.CRYPTO_KEY!);
+    return bytes.toString(Crypto.enc.Utf8);
+  } catch (error) {
+    console.error("Decryption error:", error);
+    throw new Error("Decryption failed.");
+  }
 };

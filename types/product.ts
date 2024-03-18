@@ -28,3 +28,9 @@ export type ProductWithBrandAndCategoryNamePayload = Prisma.ProductGetPayload<{
     };
   };
 }>;
+
+export type BasketItemWithProduct = Prisma.BasketItemGetPayload<{
+  include: {
+    product: true;
+  };
+}>;

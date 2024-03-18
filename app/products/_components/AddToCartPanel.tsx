@@ -42,6 +42,12 @@ const AddToCartPanel: FC<AddToCartPanelProps> = ({
     startTransition(async () => {
       addOptimistic(1);
       const result = await addToCart(product.id);
+      if (result?.error) {
+        toast({
+          title: result.error,
+          variant: "destructive",
+        });
+      }
     });
   };
 

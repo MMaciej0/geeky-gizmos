@@ -13,6 +13,7 @@ export const addToCart = async (
   productId: number,
 ): Promise<AddToCartReturn> => {
   if (typeof productId !== "number") {
+    console.error("Invalid product ID", productId);
     return {
       error: defaultErrorMessage,
     };
@@ -54,6 +55,7 @@ export const addToCart = async (
 
     revalidatePath("/products/[slug]", "page");
   } catch (error) {
+    console.error(error);
     return {
       error: defaultErrorMessage,
     };

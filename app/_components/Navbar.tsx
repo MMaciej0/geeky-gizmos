@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
 
-import { cn, getUser } from "@/lib/utils";
-import { Role } from "@prisma/client";
+import { cn, formatPrice, getUser } from "@/lib/utils";
+import { getBasket } from "@/lib/basket";
 
 import { ShoppingBasket } from "lucide-react";
 import NavbarSearch from "./NavbarSearch";
@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Navbar = async () => {
   const user = await getUser();
+  const basket = await getBasket();
   return (
     <nav className="sticky top-0 z-50 w-full backdrop-blur-xl">
       <MaxWidthWrapper>
@@ -31,24 +32,24 @@ const Navbar = async () => {
           </Link>
           <div className="flex items-center space-x-1 md:space-x-4">
             <NavbarSearch />
-            {(!user || user?.role === Role.USER) && (
-              <Link
-                href="/basket"
-                className={cn(
-                  buttonVariants({
-                    variant: "ghost",
-                    className:
-                      "relative flex h-11 flex-col items-center justify-center",
-                  }),
-                )}
-              >
-                <ShoppingBasket className="flex-shrink-0" />
-                <Badge className="absolute right-[5px] top-0 px-[5px] py-0">
-                  0
-                </Badge>
-                <span className="font-semibold leading-none">$0.00</span>
-              </Link>
-            )}
+            <Link
+              href="/basket"
+              className={cn(
+                buttonVariants({
+                  variant: "ghost",
+                  className:
+                    "relative flex h-11 flex-col items-center justify-center",
+                }),
+              )}
+            >
+              <ShoppingBasket className="flex-shrink-0" />
+              <Badge className="absolute right-[5px] top-0 px-[5px] py-0">
+                {basket?.size || 0}
+              </Badge>
+              <span className="font-semibold leading-none">
+                {basket?.total ? formatPrice(basket.total) : formatPrice(0)}
+              </span>
+            </Link>
             <UserPanel user={user} />
           </div>
         </div>

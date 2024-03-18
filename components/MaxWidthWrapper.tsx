@@ -9,7 +9,7 @@ const MaxWidthWrapper: FC<MaxWidthWrapperProps> = ({ className, ...props }) => {
   return (
     <div
       {...props}
-      className={cn("m-auto w-full max-w-screen-xl px-6 md:px-20", className)}
+      className={cn("m-auto w-full max-w-screen-xl px-2 md:px-20", className)}
     />
   );
 };

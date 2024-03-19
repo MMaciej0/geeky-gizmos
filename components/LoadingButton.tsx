@@ -17,10 +17,7 @@ const LoadingButton: FC<LoadingButtonProps> = ({
 }) => {
   return (
     <Button {...props} disabled={props.disabled || isLoading}>
-      <span className="flex items-center justify-center gap-1">
-        {isLoading && <Loader2 size={16} className="animate-spin" />}
-        {children}
-      </span>
+      {isLoading ? <Loader2 size={26} className="animate-spin" /> : children}
     </Button>
   );
 };

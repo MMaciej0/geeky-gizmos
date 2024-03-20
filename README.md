@@ -6,7 +6,7 @@
     An ecommerce application, where enthusiasts and collectors can browse, purchase a wide range of specialized gadgets.
     <br/>
     <br/>
-    <a href="https://vercel.com/mmaciej0/geeky-gizmos">View Demo</a>
+    <a href="https://geeky-gizmos.vercel.app/">View Demo</a>
     .
     <a href="https://github.com/MMaciej0/geeky-gizmos/issues">Report Bug</a>
     .

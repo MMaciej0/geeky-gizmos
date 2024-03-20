@@ -45,11 +45,9 @@ const BasketPage = async () => {
   }
 
   return (
-    <MaxWidthWrapper className="py-10">
-      <h1 className="text-center text-3xl">Your basket</h1>
-      <div className="grid h-full grid-cols-1 lg:max-h-[80vh] lg:grid-cols-4 lg:overflow-y-auto">
-        <BasketBody basket={basket} />
-      </div>
+    <MaxWidthWrapper className="pb-8">
+      <h1 className="my-6 text-center text-3xl">Your basket</h1>
+      <BasketBody basket={basket} />
     </MaxWidthWrapper>
   );
 };

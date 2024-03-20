@@ -36,19 +36,19 @@ const BasketBody: FC<BasketBodyProps> = ({ basket }) => {
   };
 
   return (
-    <>
-      <div className="py-8 lg:col-span-3">
+    <div className="grid grid-cols-1 lg:grid-cols-4">
+      <div className="h-full overflow-y-auto lg:col-span-3 lg:mx-8 lg:max-h-[80vh] lg:py-2">
         {basketState.items
           .sort((a, b) => b.product.price - a.product.price)
           .map((item) => (
             <div key={item.id} className="my-4">
-              <div className="grid grid-cols-2 justify-items-start">
-                <div className="relative aspect-square h-[240px] w-full overflow-hidden">
+              <div className="grid grid-cols-2 justify-items-center gap-4 lg:justify-items-start">
+                <div className="relative aspect-square h-[240px] max-w-full overflow-hidden">
                   <Image
                     src={item.product.imageUrl}
                     alt={item.product.name}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw"
                   />
                 </div>
@@ -100,7 +100,8 @@ const BasketBody: FC<BasketBodyProps> = ({ basket }) => {
           </LoadingButton>
         </div>
       </div>
-    </>
+      <div />
+    </div>
   );
 };
 

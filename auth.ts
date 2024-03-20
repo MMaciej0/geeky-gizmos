@@ -10,6 +10,7 @@ import { findUserByEmail, findUserById } from "./lib/utils";
 
 import type { NextAuthConfig } from "next-auth";
 import type { Role } from "@prisma/client";
+import { mergeAnnonymousBasketWithUserBasket } from "./lib/basket";
 
 export const authConfig = {
   providers: [
@@ -81,6 +82,11 @@ export const {
       token.role = currentUser.role;
 
       return token;
+    },
+  },
+  events: {
+    async signIn({ user }) {
+      await mergeAnnonymousBasketWithUserBasket(Number(user.id));
     },
   },
   adapter: PrismaAdapter(prisma),

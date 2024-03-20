@@ -5,6 +5,7 @@ import { addCategoryFormSchema } from "@/lib/validators/addProductValidation";
 import { Role } from "@prisma/client";
 import { uploadToCloudinary } from "../add-product/actions";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export const createCategory = async (formData: FormData) => {
   const user = await getUser();
@@ -57,7 +58,7 @@ export const createCategory = async (formData: FormData) => {
       return {
         error: "Unable to create category. Please try again later.",
       };
-
+    revalidatePath("/", "page");
     return {
       success: "Category created",
     };

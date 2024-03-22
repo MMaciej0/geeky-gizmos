@@ -47,7 +47,7 @@ const AddToCartPanel: FC<AddToCartPanelProps> = ({ product }) => {
     <div className="mx-4 py-6 text-center lg:py-10">
       <div className="m-auto grid max-w-[450px] grid-cols-1 grid-rows-2 place-content-center gap-y-1 rounded-md bg-accent p-1 lg:max-w-full lg:shadow-md">
         <div className="flex items-center space-x-1">
-          <p className="w-full rounded-md border bg-background py-1 text-center text-lg font-bold">
+          <p className="flex h-10 w-full items-center justify-center rounded-md border bg-background text-center text-base font-semibold">
             {formatPrice(product.price)}
           </p>
 
@@ -55,7 +55,7 @@ const AddToCartPanel: FC<AddToCartPanelProps> = ({ product }) => {
             value={selectedQuantity.toString()}
             onValueChange={(val) => setSelectedQuantity(Number(val))}
           >
-            <SelectTrigger>
+            <SelectTrigger className="text-base font-semibold">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

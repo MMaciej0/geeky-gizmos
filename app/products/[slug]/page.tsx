@@ -4,7 +4,7 @@ import { findProductBySlug } from "@/lib/utils";
 
 import ProductTemplate from "@/components/ProductTemplate";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import AddToCartPanel from "../_components/AddToCartPanel";
+import AddToCartPanel from "./_components/AddToCartPanel";
 
 interface ProductPageProps {
   params: {

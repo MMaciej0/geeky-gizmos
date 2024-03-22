@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AddToCartPanelProps {
   product: Product;
@@ -23,6 +24,7 @@ interface AddToCartPanelProps {
 const AddToCartPanel: FC<AddToCartPanelProps> = ({ product }) => {
   const { items, addItem } = useBasketStore();
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const { toast } = useToast();
   const quantityOptions = Array.from(
     { length: product.stock },
     (_, i) => i + 1,
@@ -33,6 +35,13 @@ const AddToCartPanel: FC<AddToCartPanelProps> = ({ product }) => {
       setSelectedQuantity(items[product.id].quantity);
     }
   }, [items]);
+
+  const handleAddToBasketButton = () => {
+    addItem(product, selectedQuantity);
+    toast({
+      title: `You have ${selectedQuantity}x of ${product.name} in basket!`,
+    });
+  };
 
   return (
     <div className="mx-4 py-6 text-center lg:py-10">
@@ -59,10 +68,7 @@ const AddToCartPanel: FC<AddToCartPanelProps> = ({ product }) => {
           </Select>
         </div>
         <div className="col-span-2">
-          <Button
-            className="w-full"
-            onClick={() => addItem(product, selectedQuantity)}
-          >
+          <Button className="w-full" onClick={handleAddToBasketButton}>
             Add to basket
             <ShoppingBasketIcon className="ml-2" size={20} />
           </Button>

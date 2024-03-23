@@ -76,8 +76,8 @@ const BasketBody: FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4">
-      <div className="h-full overflow-y-auto lg:col-span-3 lg:mx-8 lg:max-h-[80vh] lg:py-2">
+    <div className="flex h-full flex-col justify-between ">
+      <div className="h-full flex-grow overflow-y-auto">
         {Object.entries(items).map(([key, item]) => (
           <div key={item.product.id} className="my-4">
             <div className="grid grid-cols-2 justify-items-center gap-4 lg:justify-items-start">
@@ -131,19 +131,16 @@ const BasketBody: FC = () => {
           </div>
         ))}
       </div>
-      <div className="lg:py-8">
-        <div className="space-y-2 rounded-md border p-2">
-          <div className="space-y-2">
-            <p className="text-lg font-bold">
-              Total: {formatPrice(calculateTotal())}
-            </p>
-            <p>Shipping: FREE</p>
-          </div>
-          <hr />
-          <Button className="w-full">Checkout</Button>
+      <div className="mt-4 space-y-2 rounded-md border p-2">
+        <div className="space-y-2">
+          <p className="text-lg font-bold">
+            Total: {formatPrice(calculateTotal())}
+          </p>
+          <p>Shipping: FREE</p>
         </div>
+        <hr />
+        <Button className="w-full">Checkout</Button>
       </div>
-      <div />
     </div>
   );
 };

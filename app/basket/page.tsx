@@ -3,8 +3,8 @@ import BasketBody from "./_components/BasketBody";
 
 const BasketPage = async () => {
   return (
-    <MaxWidthWrapper className="pb-8">
-      <h1 className="my-6 text-center text-3xl">Your basket</h1>
+    <MaxWidthWrapper className="mx-auto h-[85vh] w-2/5 pb-8">
+      <h1 className="py-4 text-center text-3xl">Your Basket</h1>
       <BasketBody />
     </MaxWidthWrapper>
   );

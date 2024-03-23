@@ -31,15 +31,17 @@ Ecommerce application developed for learning purposes. The primary objective of 
 
 Key Features:
 
-- role-based user authentication enables the creation of an admin panel. Admins can add new brands, categories, and products, and determine when to publish them. All essential images are stored in Cloudinary.
+- role-based user authentication enables the creation of an admin panel. Admins can add new brands, categories, and products, and determine when to publish them. All essential images are stored in Cloudinary;
 
-- in fact of release new React hooks, i decided to store basket (cart) information directly in the database. This enables the utilization of optimistic updates for smoother interactions. Additionally, for logged-in users, their basket state becomes more persistent, ensuring it's available even when logging in from other devices.
+- persisted basket (cart) state allowing users to maintain their shopping selections across sessions. All basket management functionalities are executed on the client-side, eliminating the need for frequent server requests and ensuring rapid responsiveness;
 
+- modals, made with route interceptiong and parallel routes;
+  
 - product filtering based on search parameters.
 
 ## Built With
 
-- TypeScript, [React](https://reactjs.org/), [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [React Hook Form](https://react-hook-form.com/), [Zod](https://github.com/colinhacks/zod), [Prisma](https://www.prisma.io/), [Auth.js](https://authjs.dev/), [Cloudinary](https://cloudinary.com/).
+- TypeScript, [React](https://reactjs.org/), [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [React Hook Form](https://react-hook-form.com/), [Zod](https://github.com/colinhacks/zod), [Prisma](https://www.prisma.io/), [Auth.js](https://authjs.dev/), [Cloudinary](https://cloudinary.com/), [Zustand](https://zustand-demo.pmnd.rs/).
 
 ## Getting Started
 

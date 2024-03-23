@@ -13,42 +13,6 @@ export const toSlug = (str: string) => {
   return str.trim().toLocaleLowerCase().replace(/\s+/g, " ").replace(/ /g, "-");
 };
 
-export const paramToFullSearchString = (str: string) => {
-  return str
-    .split(" ")
-    .filter((word) => word.length > 0)
-    .join(" & ");
-};
-
-export const truncateString = (
-  string: string,
-  query: string,
-  maxLength: number,
-) => {
-  const lowerCasedStringArr = string.toLowerCase().split(" ");
-  const word = lowerCasedStringArr.find((w) => w.includes(query));
-  if (!word) return string;
-  const index = lowerCasedStringArr.indexOf(word);
-
-  const startTruncate = Math.max(0, index - Math.floor(maxLength / 2));
-  const endTruncate = Math.min(string.length, startTruncate + maxLength);
-
-  let truncatedStringArr = lowerCasedStringArr.slice(
-    startTruncate,
-    endTruncate,
-  );
-
-  if (startTruncate > 0) {
-    truncatedStringArr.unshift("...");
-  }
-
-  if (endTruncate < string.length) {
-    truncatedStringArr.push("...");
-  }
-
-  return truncatedStringArr.join(" ");
-};
-
 export const getUser = async () => {
   const session = await auth();
   if (!session?.user) {
@@ -140,57 +104,6 @@ export const formatPrice = (price: number) => {
       style: "currency",
       currency: "USD",
     }).format(price);
-  }
-};
-
-export const isEmptySearchParams = (searchParams: SearchParams) => {
-  if (!searchParams || typeof searchParams !== "object") return true;
-
-  if (Object.keys(searchParams).length === 0) return true;
-
-  for (const [, value] of Object.entries(searchParams)) {
-    if (
-      (typeof value === "string" && !value.trim()) ||
-      (Array.isArray(value) && value.length === 0)
-    ) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-export const convertSearchParamsToArray = (searchParams: SearchParams) => {
-  if (isEmptySearchParams(searchParams)) return [];
-
-  return Object.values(searchParams!).flatMap((searchParam) => {
-    if (Array.isArray(searchParam)) {
-      return searchParam.filter((p) => typeof p === "string" && p !== "");
-    } else if (typeof searchParam === "string" && searchParam !== "") {
-      return [searchParam];
-    } else {
-      return [];
-    }
-  });
-};
-
-export const deleteParamAndCreateSearchParams = (
-  param: string,
-  searchParams: SearchParams,
-) => {
-  const updatedSearchParams: { [key: string]: string | string[] } = {};
-
-  for (const [key, value] of Object.entries(searchParams)) {
-    if (typeof value === "string") {
-      if (value !== param) updatedSearchParams[key] = value;
-    } else if (Array.isArray(value)) {
-      const newValue = value.filter((v) => v !== param);
-      if (newValue.length > 0) updatedSearchParams[key] = newValue;
-    }
-  }
-
-  if (Object.keys(updatedSearchParams).length > 0) {
-    return createURLSearchParams(updatedSearchParams);
   }
 };
 

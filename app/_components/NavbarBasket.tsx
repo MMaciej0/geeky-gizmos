@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 
 import { cn, formatPrice } from "@/lib/utils";
-import { useBasketStore } from "@/lib/baskett";
+import { useBasketStore } from "@/lib/basket";
 
 import { buttonVariants } from "@/components/ui/button";
 import { ShoppingBasket } from "lucide-react";

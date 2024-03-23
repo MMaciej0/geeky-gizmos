@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { cn, formatPrice } from "@/lib/utils";
-import { useBasketStore } from "@/lib/baskett";
+import { useBasketStore } from "@/lib/basket";
 
 import { Minus, Plus } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";

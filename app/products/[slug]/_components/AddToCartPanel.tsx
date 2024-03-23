@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 
 import { formatPrice } from "@/lib/utils";
 import { Product } from "@prisma/client";
-import { useBasketStore } from "@/lib/baskett";
+import { useBasketStore } from "@/lib/basket";
 
 import { ShoppingBasket as ShoppingBasketIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";

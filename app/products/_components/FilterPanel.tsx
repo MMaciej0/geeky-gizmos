@@ -55,7 +55,7 @@ const FilterPanel: FC<FilterPanelProps> = ({
   const initialRender = useRef(true);
 
   useEffect(() => {
-    if (initialRender) {
+    if (initialRender.current) {
       initialRender.current = false;
       return;
     }

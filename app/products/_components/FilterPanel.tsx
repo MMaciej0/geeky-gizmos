@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Brand, Category } from "@prisma/client";
@@ -8,7 +8,7 @@ import { cn, convertToSelectable, createURLSearchParams } from "@/lib/utils";
 import { SearchParams } from "../page";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
-import { SlidersHorizontal, X } from "lucide-react";
+import { X } from "lucide-react";
 import Multiselect from "@/components/ui/multiselect";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,14 @@ const FilterPanel: FC<FilterPanelProps> = ({
   const debouncedBrands = useDebounce(selectedBrands);
   const debouncedCategories = useDebounce(selectedCategories);
 
+  const initialRender = useRef(true);
+
   useEffect(() => {
+    if (initialRender) {
+      initialRender.current = false;
+      return;
+    }
+
     const newSearchParams = {
       ...searchParams,
       brand: debouncedBrands,

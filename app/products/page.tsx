@@ -37,15 +37,15 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
   ]);
 
   return (
-    <div key={nanoid(10)}>
-      <MaxWidthWrapper className="py-20 lg:flex lg:px-8">
-        <div className="lg:mr-8 xl:mr-16">
-          <FilterPanel
-            searchParams={searchParams}
-            brands={brands}
-            categories={categories}
-          />
-        </div>
+    <MaxWidthWrapper className="py-20 lg:flex lg:px-8">
+      <div className="lg:mr-8 xl:mr-16">
+        <FilterPanel
+          searchParams={searchParams}
+          brands={brands}
+          categories={categories}
+        />
+      </div>
+      <div key={nanoid(10)} className="w-full">
         <Suspense fallback={<ProductsLoadingSkeleton qty={9} />}>
           <Await promise={fetchProducts(searchParams)}>
             {(products: ProductWithBrandPayload[]) => (
@@ -53,8 +53,8 @@ const ProductsPage = async ({ searchParams }: ProductsPageProps) => {
             )}
           </Await>
         </Suspense>
-      </MaxWidthWrapper>
-    </div>
+      </div>
+    </MaxWidthWrapper>
   );
 };
 

@@ -7,14 +7,13 @@ const { auth: middleware } = NextAuth(authConfig);
 export default middleware((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-
-  const isApiAuthRoute = apiAuthPrefix.startsWith(nextUrl.pathname);
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.some((route) => {
     const regex = new RegExp(`^${route.replace(/\[.*?\]/, ".*")}$`);
     return regex.test(nextUrl.pathname);
   });
   const isAuthRoute = authRoutes.some((route) =>
-    route.startsWith(nextUrl.pathname),
+    nextUrl.pathname.startsWith(route),
   );
 
   if (isApiAuthRoute) {
@@ -33,9 +32,7 @@ export default middleware((req) => {
     if (nextUrl.search) {
       callbackUrl += nextUrl.search;
     }
-
     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-
     return NextResponse.redirect(
       new URL(`/sign-in?callbackUrl=${encodedCallbackUrl}`, nextUrl),
     );

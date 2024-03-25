@@ -57,9 +57,3 @@ export const register = async (formData: TRegisterSchema) => {
     redirectTo: "/",
   });
 };
-
-export const signUpWithGoogle = async () => {
-  await signIn("google", {
-    redirectTo: "/",
-  });
-};

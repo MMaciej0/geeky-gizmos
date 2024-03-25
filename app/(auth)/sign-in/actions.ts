@@ -33,7 +33,16 @@ export const login = async (
 };
 
 export const signInWithWithGoogle = async (callbackUrl: string | null) => {
-  await signIn("google", {
-    redirectTo: callbackUrl ?? "/",
-  });
+  try {
+    await signIn("google", {
+      redirectTo: callbackUrl ?? "/",
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return {
+        error: error.cause?.err?.message,
+      };
+    }
+    throw error;
+  }
 };

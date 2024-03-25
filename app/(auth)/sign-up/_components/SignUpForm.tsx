@@ -2,8 +2,10 @@
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
 
-import { register, signUpWithGoogle } from "../actions";
+import { register } from "../actions";
+import { signInWithWithGoogle } from "../../sign-in/actions";
 import {
   TRegisterSchema,
   registerSchema,
@@ -30,6 +32,8 @@ import LoadingButton from "@/components/LoadingButton";
 import { useToast } from "@/components/ui/use-toast";
 
 const SignUpForm = () => {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const { toast } = useToast();
   const form = useForm<TRegisterSchema>({
     defaultValues: {
@@ -56,12 +60,11 @@ const SignUpForm = () => {
   };
 
   const signUpWithGoogleHandler = async () => {
-    try {
-      await signUpWithGoogle();
-    } catch (error) {
-      toast({
+    const result = await signInWithWithGoogle(callbackUrl);
+    if (result?.error) {
+      return toast({
         variant: "destructive",
-        description: "Something went wrong. Try again later.",
+        description: result.error,
       });
     }
   };

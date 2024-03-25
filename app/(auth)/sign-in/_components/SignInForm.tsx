@@ -56,14 +56,14 @@ const SignInForm = () => {
   };
 
   const signInWithGoogleHandler = async () => {
-    try {
-      await signInWithWithGoogle(callbackUrl);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        description: "Something went wrong. Try again later.",
-      });
-    }
+    await signInWithWithGoogle(callbackUrl).then((callback) => {
+      if (callback?.error) {
+        toast({
+          variant: "destructive",
+          description: callback.error,
+        });
+      }
+    });
   };
 
   return (
@@ -125,7 +125,7 @@ const SignInForm = () => {
             className="mt-4 w-full"
             variant="outline"
           >
-            Sign up with Google
+            Sign in with Google
           </Button>
         </Form>
       </CardContent>

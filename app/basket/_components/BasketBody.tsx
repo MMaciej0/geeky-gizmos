@@ -4,11 +4,11 @@ import React, { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { cn, formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { useBasketStore } from "@/lib/basket";
 
 import { Minus, Plus } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import DefaultLoading from "@/components/DefaultLoading";
 
 const BasketBody: FC = () => {
@@ -43,34 +43,10 @@ const BasketBody: FC = () => {
 
   if (calculateSize() === 0) {
     return (
-      <div className="m-auto max-w-[650px] p-6 py-16">
+      <div className="m-auto p-6 py-16">
         <h1 className="text-center text-3xl">
           Your basket is empty. Go ahead, grab something!
         </h1>
-        <div className="my-10 flex flex-col md:flex-row">
-          <Link
-            href="/"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "my-2 w-full md:mx-2",
-              }),
-            )}
-          >
-            Home Page
-          </Link>
-          <Link
-            href="/products"
-            className={cn(
-              buttonVariants({
-                variant: "outline",
-                className: "my-2 w-full md:mx-2",
-              }),
-            )}
-          >
-            Products Page
-          </Link>
-        </div>
       </div>
     );
   }

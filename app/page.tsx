@@ -1,14 +1,21 @@
 import Link from "next/link";
+import { Suspense } from "react";
+
 import prisma from "@/lib/prisma";
+import { cache } from "@/lib/utils";
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Footer from "./_components/Footer";
-import CategoriesGrid from "./_components/CategoriesGrid";
-import ProductSlider from "@/components/ProductSlider";
+import CategoriesGrid, {
+  CategoriesSkeleton,
+} from "./_components/CategoriesGrid";
+import ProductSlider, {
+  ProductSliderLoadingSkeleton,
+} from "@/components/ProductSlider";
 
-export default async function Home() {
-  const [newestProducts, categories] = await Promise.all([
+const newestProductsFetcher = cache(
+  () =>
     prisma.product.findMany({
       where: { approved: true },
       include: {
@@ -17,13 +24,22 @@ export default async function Home() {
       orderBy: { createdAt: "desc" },
       take: 10,
     }),
+  ["/", "newestProductsFetcher"],
+  { revalidate: 60 * 60 * 24 },
+);
+
+const categoriesFetcher = cache(
+  () =>
     prisma.category.findMany({
       orderBy: {
         name: "asc",
       },
     }),
-  ]);
+  ["/", "categoriesFetcher"],
+  { revalidate: 60 * 60 * 24 },
+);
 
+export default function Home() {
   return (
     <main>
       <MaxWidthWrapper className="space-y-10">
@@ -42,18 +58,18 @@ export default async function Home() {
             <Button variant="link">Our quality promise &rarr;</Button>
           </div>
         </header>
-        {newestProducts.length > 0 && (
-          <section>
-            <h3 className="my-4 px-4 text-2xl font-bold">Newest</h3>
-            <ProductSlider products={newestProducts} />
-          </section>
-        )}
-        {categories.length > 0 && (
-          <section>
-            <h3 className="my-4 px-4 text-2xl font-bold">Categories</h3>
-            <CategoriesGrid categories={categories} />
-          </section>
-        )}
+        <section>
+          <h3 className="my-4 px-4 text-2xl font-bold">Newest</h3>
+          <Suspense fallback={<ProductSliderLoadingSkeleton />}>
+            <ProductSlider productsFetcher={newestProductsFetcher} />
+          </Suspense>
+        </section>
+        <section>
+          <h3 className="my-4 px-4 text-2xl font-bold">Categories</h3>
+          <Suspense fallback={<CategoriesSkeleton />}>
+            <CategoriesGrid categoriesFetcher={categoriesFetcher} />
+          </Suspense>
+        </section>
       </MaxWidthWrapper>
       <div className="bg-accent pb-10">
         <MaxWidthWrapper className="mt-10">

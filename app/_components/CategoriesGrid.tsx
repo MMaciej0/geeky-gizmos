@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 import { Category } from "@prisma/client";
 
 interface CategoriesGridProps {
-  categories: Category[];
+  categoriesFetcher: () => Promise<Category[]>;
 }
 
-const CategoriesGrid = ({ categories }: CategoriesGridProps) => {
+const CategoriesGrid = async ({ categoriesFetcher }: CategoriesGridProps) => {
+  const categories = await categoriesFetcher();
   return (
     <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
@@ -36,3 +37,16 @@ const CategoriesGrid = ({ categories }: CategoriesGridProps) => {
 };
 
 export default CategoriesGrid;
+
+export const CategoriesSkeleton = () => (
+  <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3">
+    {[...Array(6)].map((_, i) => (
+      <div
+        key={i}
+        className={cn(
+          "min-h-[100px] w-full animate-pulse overflow-hidden rounded-md bg-muted md:min-h-[150px]",
+        )}
+      ></div>
+    ))}
+  </div>
+);

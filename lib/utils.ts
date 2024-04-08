@@ -3,11 +3,22 @@ import Crypto from "crypto-js";
 import { type ClassValue, clsx } from "clsx";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { SearchParams } from "@/app/products/page";
+import { unstable_cache as nextCache } from "next/cache";
+import { cache as reactCache } from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+type Callback = (...args: any[]) => Promise<any>;
+
+export const cache = <T extends Callback>(
+  callback: T,
+  keyParts: string[],
+  options: { revalidate?: number | false; tags?: string[] },
+) => {
+  return nextCache(reactCache(callback), keyParts, options);
+};
 
 export const toSlug = (str: string) => {
   return str.trim().toLocaleLowerCase().replace(/\s+/g, " ").replace(/ /g, "-");

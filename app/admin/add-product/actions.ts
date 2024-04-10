@@ -144,18 +144,23 @@ const updateProductCategories = async (
 export const uploadToCloudinary = async (image: File, folderName: string) => {
   try {
     const arrayBuffer = await image.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
+    const mime = image.type;
+    const encoding = "base64";
+    const base64Data = Buffer.from(arrayBuffer).toString("base64");
+    const imageUri = "data:" + mime + ";" + encoding + "," + base64Data;
     const result = await new Promise<CloudinaryUploadResult>(
       (resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream({ folder: folderName }, (error, result) => {
+        cloudinary.uploader.upload(
+          imageUri,
+          { folder: folderName },
+          (error, result) => {
             if (error) {
               reject(error);
             } else {
               resolve(result as CloudinaryUploadResult);
             }
-          })
-          .end(buffer);
+          },
+        );
       },
     );
     return { secureUrl: result.secure_url, publicId: result.public_id };

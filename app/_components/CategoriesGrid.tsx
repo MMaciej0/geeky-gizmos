@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { cn } from "@/lib/utils";
+import { cn, createURLSearchParams } from "@/lib/utils";
 import { Category } from "@prisma/client";
 
 interface CategoriesGridProps {
@@ -14,7 +14,7 @@ const CategoriesGrid = async ({ categoriesFetcher }: CategoriesGridProps) => {
     <div className="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
         <Link
-          href={`/products?category=${category.name}`}
+          href={`/products?${createURLSearchParams({ category: category.name })}`}
           key={category.id}
           className={cn(
             "group relative flex min-h-[100px] items-center justify-center overflow-hidden rounded-md md:min-h-[150px]",

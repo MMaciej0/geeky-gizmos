@@ -52,25 +52,27 @@ const FilterPanel: FC<FilterPanelProps> = ({
   const debouncedBrands = useDebounce(selectedBrands);
   const debouncedCategories = useDebounce(selectedCategories);
 
-  const initialRender = useRef(true);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
+    if (isInitialRender) {
+      setIsInitialRender(false);
       return;
     }
+
     const newSearchParams = {
       ...searchParams,
       brand: debouncedBrands,
       category: debouncedCategories,
       sort: sortMethod,
     };
+
     const newURLSearchParams = createURLSearchParams(newSearchParams);
     router.push(`/products?${newURLSearchParams}`);
   }, [debouncedBrands, debouncedCategories, sortMethod]);
 
   return (
-    <section className="mb-16">
+    <section className="top-20 mb-16 lg:sticky">
       <Button
         variant="outline"
         className="w-full lg:hidden"

@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { useRouter } from "next/navigation";
 
 import { Loader2, Search } from "lucide-react";
 import {
   Command,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 
 const NavbarSearch = () => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -42,6 +42,11 @@ const NavbarSearch = () => {
       setSearchResult(null);
     }
   }, [debouncedSearchValue]);
+
+  const handleRedirect = (url: string) => {
+    router.push(url);
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -86,25 +91,34 @@ const NavbarSearch = () => {
                         {searchResult.productsByName?.map(
                           ({ name, id, slug }) => {
                             return (
-                              <CommandItem
+                              <Button
+                                variant="ghost"
                                 key={id}
-                                onMouseDown={() => setOpen(false)}
+                                onClick={() =>
+                                  handleRedirect(
+                                    `/products/${encodeURIComponent(slug)}`,
+                                  )
+                                }
+                                className="w-full justify-start"
                               >
-                                <Link href={`/products/${encodeURI(slug)}`}>
-                                  {name}
-                                </Link>
-                              </CommandItem>
+                                {name}
+                              </Button>
                             );
                           },
                         )}
                         {searchResult.productsByNameCounter! >
                           searchResult.productsByName.length && (
-                          <Link href={`/products?name=${searchValue}`}>
-                            <p className="px-2 py-1.5 text-xs font-semibold underline">
-                              See all products whose name matches your search -{" "}
-                              {searchResult.productsByNameCounter}
-                            </p>
-                          </Link>
+                          <p
+                            className="cursor-pointer px-2 py-1.5 text-xs font-semibold underline"
+                            onClick={() =>
+                              handleRedirect(
+                                `/products?name=${encodeURIComponent(searchValue)}`,
+                              )
+                            }
+                          >
+                            See all products whose name matches your search -{" "}
+                            {searchResult.productsByNameCounter}
+                          </p>
                         )}
                       </CommandGroup>
                       <hr />
@@ -116,14 +130,18 @@ const NavbarSearch = () => {
                     <CommandGroup heading="Product brands matching your search:">
                       {searchResult.brands?.map((brand) => {
                         return (
-                          <CommandItem
+                          <Button
+                            variant="ghost"
                             key={brand}
-                            onMouseDown={() => setOpen(false)}
+                            onClick={() =>
+                              handleRedirect(
+                                `/products?brand=${encodeURIComponent(brand)}`,
+                              )
+                            }
+                            className="w-full justify-start"
                           >
-                            <Link href={`/products?brand=${encodeURI(brand)}`}>
-                              {brand}
-                            </Link>
-                          </CommandItem>
+                            {brand}
+                          </Button>
                         );
                       })}
                     </CommandGroup>
@@ -136,16 +154,18 @@ const NavbarSearch = () => {
                     <CommandGroup heading="Categories matching your search:">
                       {searchResult.category?.map((category) => {
                         return (
-                          <CommandItem
+                          <Button
+                            variant="ghost"
                             key={category}
-                            onMouseDown={() => setOpen(false)}
+                            onClick={() =>
+                              handleRedirect(
+                                `/products?category=${encodeURIComponent(category)}`,
+                              )
+                            }
+                            className="w-full justify-start"
                           >
-                            <Link
-                              href={`/products?category=${encodeURI(category)}`}
-                            >
-                              {category}
-                            </Link>
-                          </CommandItem>
+                            {category}
+                          </Button>
                         );
                       })}
                     </CommandGroup>

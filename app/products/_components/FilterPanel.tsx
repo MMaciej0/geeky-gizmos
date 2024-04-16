@@ -59,14 +59,12 @@ const FilterPanel: FC<FilterPanelProps> = ({
       initialRender.current = false;
       return;
     }
-
     const newSearchParams = {
       ...searchParams,
       brand: debouncedBrands,
       category: debouncedCategories,
       sort: sortMethod,
     };
-
     const newURLSearchParams = createURLSearchParams(newSearchParams);
     router.push(`/products?${newURLSearchParams}`);
   }, [debouncedBrands, debouncedCategories, sortMethod]);

@@ -18,6 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { createURLSearchParams } from "@/lib/utils";
 
 const NavbarSearch = () => {
   const router = useRouter();
@@ -112,7 +113,7 @@ const NavbarSearch = () => {
                             className="cursor-pointer px-2 py-1.5 text-xs font-semibold underline"
                             onClick={() =>
                               handleRedirect(
-                                `/products?name=${encodeURIComponent(searchValue)}`,
+                                `/products?${createURLSearchParams({ name: searchValue })}}`,
                               )
                             }
                           >
@@ -135,7 +136,7 @@ const NavbarSearch = () => {
                             key={brand}
                             onClick={() =>
                               handleRedirect(
-                                `/products?brand=${encodeURIComponent(brand)}`,
+                                `/products?${createURLSearchParams({ brand })}}`,
                               )
                             }
                             className="w-full justify-start"
@@ -159,7 +160,7 @@ const NavbarSearch = () => {
                             key={category}
                             onClick={() =>
                               handleRedirect(
-                                `/products?category=${encodeURIComponent(category)}`,
+                                `/products?${createURLSearchParams({ category })}`,
                               )
                             }
                             className="w-full justify-start"

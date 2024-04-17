@@ -1,10 +1,11 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Brand, Category } from "@prisma/client";
 import { cn, convertToSelectable, createURLSearchParams } from "@/lib/utils";
+import { SearchParams } from "../page";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
 import { X } from "lucide-react";
@@ -18,8 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { type SearchParams } from "../actions";
 
 interface FilterPanelProps {
   searchParams: SearchParams;

@@ -7,7 +7,7 @@ interface ProductsLoadingSkeletonProps {
 
 const ProductsLoadingSkeleton = ({ qty }: ProductsLoadingSkeletonProps) => {
   return (
-    <div className="grid w-full gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid w-full gap-x-3 gap-y-6 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(qty || 6)].map((v, i) => (
         <div className="space-y-2 rounded-md border" key={i}>
           <Skeleton className="min-h-[180px] w-full" />
